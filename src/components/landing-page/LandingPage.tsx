@@ -138,6 +138,48 @@ export default function LandingPage() {
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const resetScroll = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    };
+    const navigationEntry = performance.getEntriesByType(
+      "navigation",
+    )[0] as PerformanceNavigationTiming | undefined;
+    let resetFrame: number | undefined;
+    let previousRestoration: History["scrollRestoration"] | undefined;
+
+    if (navigationEntry?.type === "reload") {
+      previousRestoration = window.history.scrollRestoration;
+      window.history.scrollRestoration = "manual";
+
+      if (window.location.hash) {
+        window.history.replaceState(
+          window.history.state,
+          "",
+          `${window.location.pathname}${window.location.search}`,
+        );
+      }
+
+      resetScroll();
+      resetFrame = window.requestAnimationFrame(() => {
+        resetScroll();
+        if (previousRestoration !== undefined) {
+          window.history.scrollRestoration = previousRestoration;
+          previousRestoration = undefined;
+        }
+      });
+    }
+
+    window.addEventListener("beforeunload", resetScroll);
+    return () => {
+      window.removeEventListener("beforeunload", resetScroll);
+      if (resetFrame !== undefined) window.cancelAnimationFrame(resetFrame);
+      if (previousRestoration !== undefined) {
+        window.history.scrollRestoration = previousRestoration;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduceMotion.matches) {
       const finishImmediately = window.setTimeout(
