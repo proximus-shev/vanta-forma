@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vanta Forma
 
-## Getting Started
+Vanta Forma is an architectural portfolio for Eugene Sasu Appiah, presenting selected residential, religious, and interior work through a responsive editorial experience.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 App Router
+- React 19
+- TypeScript
+- CSS Modules
+- `next/image` and `next/font`
+
+## Local development
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Start the development server at [http://localhost:3000](http://localhost:3000):
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Production checks
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Run these before a release:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+```
 
-## Learn More
+Start the production build locally:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Routes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `/` — studio landing page
+- `/projects` — project index
+- `/projects/[slug]` — individual project case studies
+- `/robots.txt` — crawler policy
+- `/sitemap.xml` — public route sitemap
 
-## Deploy on Vercel
+## Site URL
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Set `NEXT_PUBLIC_SITE_URL` to the final production origin, including `https://`, so canonical, social, robots, and sitemap URLs use the public domain. Vercel deployment URLs are used automatically when the variable is not configured.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+The project is ready for a standard Vercel deployment after the lint, type-check, and production-build commands pass.
