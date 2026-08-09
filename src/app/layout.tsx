@@ -27,8 +27,10 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/images/vf-hero.webp",
-        alt: "Vanta Forma architectural design",
+        url: "/images/vanta-forma-social-preview.png",
+        width: 1200,
+        height: 630,
+        alt: "Vanta Forma — Where Shadow Shapes Form",
       },
     ],
   },
@@ -37,7 +39,7 @@ export const metadata: Metadata = {
     title: "Vanta Forma — Architecture with Intention",
     description:
       "Vanta Forma is an architecture studio shaping enduring spaces through form, light, material and purpose.",
-    images: ["/images/vf-hero.webp"],
+    images: ["/images/vanta-forma-social-preview.png"],
   },
   icons: {
     icon: "/images/brand/vanta-forma-icon.png",
