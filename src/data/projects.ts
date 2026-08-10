@@ -17,10 +17,9 @@ export type PortfolioProject = {
   plates: { src: string; alt: string; fit?: "cover" | "contain" }[];
 };
 
-export const projects: PortfolioProject[] = [
+const projectCatalog: Omit<PortfolioProject, "number">[] = [
   {
     slug: "kingdav-townhouses",
-    number: "01",
     title: "Six Townhouses",
     type: "Residential",
     typeDescription:
@@ -64,7 +63,6 @@ export const projects: PortfolioProject[] = [
   },
   {
     slug: "courtyard-townhouses",
-    number: "02",
     title: "Courtyard Townhouses",
     type: "Residential",
     typeDescription:
@@ -104,7 +102,6 @@ export const projects: PortfolioProject[] = [
   },
   {
     slug: "legacy-townhouses",
-    number: "03",
     title: "Legacy Townhouses",
     type: "Residential",
     typeDescription:
@@ -160,7 +157,6 @@ export const projects: PortfolioProject[] = [
   },
   {
     slug: "executive-residence",
-    number: "04",
     title: "Executive Residence",
     type: "Residential",
     typeDescription:
@@ -224,7 +220,6 @@ export const projects: PortfolioProject[] = [
   },
   {
     slug: "house-of-god",
-    number: "05",
     title: "House of God",
     type: "Religious / Institutional",
     typeDescription:
@@ -264,7 +259,6 @@ export const projects: PortfolioProject[] = [
   },
   {
     slug: "earth-and-light-bathroom",
-    number: "06",
     title: "Earth & Light Bathroom",
     type: "Interior",
     typeDescription:
@@ -312,7 +306,6 @@ export const projects: PortfolioProject[] = [
   },
   {
     slug: "east-legon-renovation",
-    number: "07",
     title: "East Legon Renovation",
     type: "Residential renovation",
     typeDescription:
@@ -351,6 +344,16 @@ export const projects: PortfolioProject[] = [
     ],
   },
 ];
+
+const primaryProjectSlug = "executive-residence";
+
+export const projects: PortfolioProject[] = [
+  ...projectCatalog.filter((project) => project.slug === primaryProjectSlug),
+  ...projectCatalog.filter((project) => project.slug !== primaryProjectSlug),
+].map((project, index) => ({
+  ...project,
+  number: String(index + 1).padStart(2, "0"),
+}));
 
 export function getProject(slug: string) {
   return projects.find((project) => project.slug === slug);

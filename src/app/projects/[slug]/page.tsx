@@ -277,7 +277,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <div><dt>Location</dt><dd>{project.location}</dd></div>
             <div><dt>Status</dt><dd>{project.status}</dd></div>
             <div><dt>Project</dt><dd>{project.number} of {String(projects.length).padStart(2, "0")}</dd></div>
-            <div><dt>Architect</dt><dd>Eugene Sasu Appiah</dd></div>
+            <div><dt>Student architect</dt><dd>Eugene Sasu Appiah</dd></div>
             <div><dt>Studio</dt><dd>Vanta Forma</dd></div>
             {project.collaborator && <div><dt>Collaborator</dt><dd>{project.collaborator}</dd></div>}
           </dl>

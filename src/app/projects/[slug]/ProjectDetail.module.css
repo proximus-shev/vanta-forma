@@ -151,7 +151,8 @@
 .galleryStandardCards .galleryRail figure:only-child,
 .galleryStandardCards .galleryRail figure:first-child:nth-last-child(2),
 .galleryStandardCards .galleryRail figure:first-child:nth-last-child(2) ~ figure { flex-basis: calc((100% - 9px) / 4); }
-.galleryImage { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #141412; }
+.galleryImage { position: relative; display: block; width: 100%; aspect-ratio: 16 / 10; overflow: hidden; padding: 0; border: 0; background: #141412; color: inherit; cursor: pointer; }
+.galleryImage:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .galleryRail figure:only-child .galleryImage,
 .galleryRail figure:first-child:nth-last-child(2) .galleryImage,
 .galleryRail figure:first-child:nth-last-child(2) ~ figure .galleryImage { aspect-ratio: 16 / 9; }
@@ -172,9 +173,12 @@
 .galleryControl svg { width: 18px; fill: none; stroke: currentColor; stroke-width: 1; }
 .galleryPrevious { left: -20px; }
 .galleryNext { right: -20px; }
-.galleryPagination { display: flex; min-height: 21px; gap: 6px; justify-content: center; align-items: end; padding-top: 13px; }
-.galleryPagination button { width: 20px; height: 2px; padding: 0; border: 0; background: rgba(255,255,255,.18); cursor: pointer; transition: width .2s ease, background .2s ease; }
-.galleryPagination .galleryDotActive { width: 27px; background: var(--gold); }
+.galleryPagination { display: flex; min-height: 34px; gap: 0; justify-content: center; align-items: center; padding-top: 9px; }
+.galleryPagination button { position: relative; width: 32px; height: 28px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.galleryPagination button::before { position: absolute; top: 50%; left: 50%; width: 20px; height: 2px; background: rgba(255,255,255,.18); content: ""; transform: translate(-50%,-50%); transition: width .2s ease, background .2s ease; }
+.galleryPagination button:hover::before,
+.galleryPagination button:focus-visible::before { background: rgba(185,154,82,.68); }
+.galleryPagination .galleryDotActive::before { width: 27px; background: var(--gold); }
 
 .details { display: grid; grid-template-columns: 30% 42% 28%; border-bottom: 1px solid var(--line); background: var(--panel); }
 .detailTable,

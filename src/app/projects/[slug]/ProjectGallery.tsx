@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type KeyboardEvent, useRef, useState } from "react";
+import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import styles from "./ProjectDetail.module.css";
 
 type GalleryImage = {
@@ -30,18 +30,66 @@ export default function ProjectGallery({
   standardCards = false,
 }: ProjectGalleryProps) {
   const railRef = useRef<HTMLDivElement>(null);
+  const scrollFrameRef = useRef<number | null>(null);
   const [activeImage, setActiveImage] = useState(0);
 
   const showImage = (index: number) => {
     const nextIndex = (index + images.length) % images.length;
-    const target = railRef.current?.children.item(nextIndex) as HTMLElement | null;
+    const rail = railRef.current;
+    const target = rail?.children.item(nextIndex) as HTMLElement | null;
 
     setActiveImage(nextIndex);
-    railRef.current?.scrollTo({
-      left: target?.offsetLeft ?? 0,
+    if (!rail || !target) return;
+
+    const railRect = rail.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    rail.scrollTo({
+      left: rail.scrollLeft + targetRect.left - railRect.left,
       behavior: "smooth",
     });
   };
+
+  const handleRailScroll = () => {
+    if (!window.matchMedia("(max-width: 760px)").matches) return;
+    if (scrollFrameRef.current !== null) {
+      window.cancelAnimationFrame(scrollFrameRef.current);
+    }
+
+    scrollFrameRef.current = window.requestAnimationFrame(() => {
+      const rail = railRef.current;
+      if (!rail) return;
+
+      const railRect = rail.getBoundingClientRect();
+      const railCenter = railRect.left + railRect.width / 2;
+      let closestIndex = 0;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      Array.from(rail.children).forEach((child, index) => {
+        const childRect = child.getBoundingClientRect();
+        const childCenter = childRect.left + childRect.width / 2;
+        const distance = Math.abs(childCenter - railCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      setActiveImage((current) =>
+        current === closestIndex ? current : closestIndex,
+      );
+      scrollFrameRef.current = null;
+    });
+  };
+
+  useEffect(
+    () => () => {
+      if (scrollFrameRef.current !== null) {
+        window.cancelAnimationFrame(scrollFrameRef.current);
+      }
+    },
+    [],
+  );
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowLeft") {
@@ -85,14 +133,18 @@ export default function ProjectGallery({
           className={styles.galleryRail}
           tabIndex={0}
           onKeyDown={handleKeyDown}
+          onScroll={handleRailScroll}
           aria-label={`${projectTitle} image gallery. Use left and right arrow keys to navigate.`}
         >
           {images.map((image, index) => (
-            <figure key={image.src}>
-              <div
+            <figure id={`gallery-image-${index + 1}`} key={image.src}>
+              <button
+                type="button"
                 className={`${styles.galleryImage} ${
                   image.fit === "contain" ? styles.galleryImageContain : ""
                 }`}
+                onClick={() => setActiveImage(index)}
+                aria-label={`Select image ${index + 1} of ${images.length}: ${image.alt}`}
               >
                 <Image
                   src={image.src}
@@ -100,7 +152,7 @@ export default function ProjectGallery({
                   fill
                   sizes="(max-width: 760px) 88vw, (max-width: 1100px) 48vw, 34vw"
                 />
-              </div>
+              </button>
               <figcaption>
                 <span>Image {String(index + 1).padStart(2, "0")}</span>
                 <span>{projectTitle}</span>
@@ -129,6 +181,7 @@ export default function ProjectGallery({
             onClick={() => showImage(index)}
             aria-label={`Show image ${index + 1} of ${images.length}`}
             aria-current={index === activeImage ? "true" : undefined}
+            aria-controls={`gallery-image-${index + 1}`}
           />
         ))}
         <span className={styles.srOnly}>

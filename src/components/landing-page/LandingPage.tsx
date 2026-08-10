@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { projects as portfolioProjects } from "@/data/projects";
 import styles from "./LandingPage.module.css";
 
 const projects = portfolioProjects.slice(0, 5);
+let hasPlayedIntroThisDocument = false;
 
 const navItems = [
   ["Work", "#work"],
@@ -136,6 +137,20 @@ export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const introDecisionMadeRef = useRef(false);
+  const shouldPlayIntroRef = useRef(true);
+
+  useLayoutEffect(() => {
+    if (introDecisionMadeRef.current) return;
+    introDecisionMadeRef.current = true;
+
+    shouldPlayIntroRef.current = !hasPlayedIntroThisDocument;
+    hasPlayedIntroThisDocument = true;
+
+    if (!shouldPlayIntroRef.current) {
+      setIntroPhase("done");
+    }
+  }, []);
 
   useEffect(() => {
     const resetScroll = () => {
@@ -180,6 +195,8 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
+    if (!shouldPlayIntroRef.current) return;
+
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduceMotion.matches) {
       const finishImmediately = window.setTimeout(
@@ -470,7 +487,7 @@ export default function LandingPage() {
           </h2>
           <div className={styles.philosophyBody}>
             <p>
-              Eugene Sasu Appiah is an architectural designer whose work
+              Eugene Sasu Appiah is a student architect whose work
               reflects a growing understanding of space, function and context.
               His academic and creative projects bring together design thinking,
               technical development and a commitment to purposeful spaces.
@@ -515,7 +532,7 @@ export default function LandingPage() {
           />
           <div className={styles.signatureIdentity}>
             <strong>Eugene Sasu Appiah</strong>
-            <span>Architect &amp; creative director</span>
+            <span>Student architect &amp; creative director</span>
           </div>
         </div>
       </section>
