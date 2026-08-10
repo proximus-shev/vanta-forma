@@ -219,6 +219,54 @@ const projectCatalog: Omit<PortfolioProject, "number">[] = [
     ],
   },
   {
+    slug: "box-and-bar",
+    title: "Box & Bar",
+    type: "Hospitality",
+    typeDescription:
+      "A contemporary two-level bar and social venue shaped from modular shipping-container forms.",
+    location: "Ghana",
+    status: "Concept design",
+    summary:
+      "A vibrant hospitality space transforming modular container language into an open social destination.",
+    description: [
+      "Box & Bar is a contemporary hospitality space conceived from the modular character of shipping containers. The design transforms the rigid industrial language of the container into a vibrant social environment through stacking, connection and openness.",
+      "The arrangement creates a two-level experience, with the elevated terrace extending the bar and becoming a focal point for social interaction. An external staircase provides direct access to the upper level while forming a prominent architectural feature.",
+      "Large glazed openings contrast with the solid container walls, introducing transparency, natural light and a visual connection between inside and outside. The raw character of container architecture is retained within a modern, inviting place for gathering, leisure and community.",
+    ],
+    concept:
+      "Stacking, connection and openness transform a rigid utilitarian container system into a vibrant place for gathering and community.",
+    inspiration:
+      "The modular logic and raw industrial character of shipping containers, softened by warm timber, transparent glazing and layered evening light.",
+    planRationale:
+      "The bar anchors the lower level while the elevated terrace expands the social experience above; the external stair makes circulation direct and gives the composition a clear architectural feature.",
+    program: [
+      "Two-level hospitality venue",
+      "Ground-floor bar",
+      "Elevated social terrace",
+      "External feature staircase",
+      "Indoor-outdoor gathering areas",
+    ],
+    hero: "/images/projects/box-and-bar/hero.webp",
+    plates: [
+      {
+        src: "/images/projects/box-and-bar/gallery-02.webp",
+        alt: "Box & Bar upper terrace with timber seating and pergolas",
+      },
+      {
+        src: "/images/projects/box-and-bar/gallery-03.webp",
+        alt: "Box & Bar exterior terrace, glazed facade and feature stair at dusk",
+      },
+      {
+        src: "/images/projects/box-and-bar/gallery-04.webp",
+        alt: "Box & Bar interior counters and central service island",
+      },
+      {
+        src: "/images/projects/box-and-bar/gallery-05.webp",
+        alt: "Box & Bar illuminated interior seating and bar counters",
+      },
+    ],
+  },
+  {
     slug: "house-of-god",
     title: "House of God",
     type: "Religious / Institutional",
@@ -345,11 +393,15 @@ const projectCatalog: Omit<PortfolioProject, "number">[] = [
   },
 ];
 
-const primaryProjectSlug = "executive-residence";
+const primaryProjectSlugs = ["executive-residence", "box-and-bar"];
 
 export const projects: PortfolioProject[] = [
-  ...projectCatalog.filter((project) => project.slug === primaryProjectSlug),
-  ...projectCatalog.filter((project) => project.slug !== primaryProjectSlug),
+  ...primaryProjectSlugs.flatMap((slug) =>
+    projectCatalog.filter((project) => project.slug === slug),
+  ),
+  ...projectCatalog.filter(
+    (project) => !primaryProjectSlugs.includes(project.slug),
+  ),
 ].map((project, index) => ({
   ...project,
   number: String(index + 1).padStart(2, "0"),

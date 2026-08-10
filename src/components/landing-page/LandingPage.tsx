@@ -376,7 +376,7 @@ export default function LandingPage() {
             <span>shapes form.</span>
           </h1>
           <p className={styles.heroTagline}>
-            Architecture shaped by light, context and intention.
+            THE OFFICIAL ARCHITECTURAL PORTFOLIO OF EUGENE SASU APPIAH
           </p>
           <a href="#work" className={styles.textLink}>
             Explore projects <Arrow />
