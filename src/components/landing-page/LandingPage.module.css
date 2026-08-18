@@ -803,7 +803,7 @@
   .workIntro .sectionLabel { margin-bottom: 34px; }
   .workIntro > p:not(.sectionLabel) { margin: 25px 0 36px; }
   .workIntro .textLink { min-height: 46px; margin-bottom: 42px; padding: 0 17px; border: 1px solid rgba(200,165,108,.5); color: var(--gold); }
-  .projectRail { gap: 12px; min-height: 410px; overflow-x: auto; border: 0; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .projectRail { gap: 12px; min-height: 410px; overflow-x: auto; border: 0; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .projectRail::-webkit-scrollbar { display: none; }
   .projectCard,
   .projectActive { min-width: 82vw; flex: 0 0 82vw; overflow: hidden; border: 1px solid rgba(200,165,108,.28); border-radius: 16px; scroll-snap-align: center; }

@@ -137,6 +137,8 @@ export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const projectRailRef = useRef<HTMLDivElement>(null);
+  const projectScrollFrameRef = useRef<number | null>(null);
   const introDecisionMadeRef = useRef(false);
   const shouldPlayIntroRef = useRef(true);
 
@@ -265,15 +267,77 @@ export default function LandingPage() {
     return () => window.removeEventListener("pointermove", handlePointerMove);
   }, []);
 
+  useEffect(
+    () => () => {
+      if (projectScrollFrameRef.current !== null) {
+        window.cancelAnimationFrame(projectScrollFrameRef.current);
+      }
+    },
+    [],
+  );
+
   const skipIntro = () => {
     setIntroPhase("leaving");
     window.setTimeout(() => setIntroPhase("done"), 650);
   };
 
+  const showProject = (index: number) => {
+    const nextIndex = (index + projects.length) % projects.length;
+    setActiveProject(nextIndex);
+
+    window.requestAnimationFrame(() => {
+      const rail = projectRailRef.current;
+      const target = rail?.children.item(nextIndex) as HTMLElement | null;
+      if (!rail || !target || rail.scrollWidth <= rail.clientWidth) return;
+
+      const railRect = rail.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      rail.scrollTo({
+        left:
+          rail.scrollLeft +
+          targetRect.left -
+          railRect.left -
+          (railRect.width - targetRect.width) / 2,
+        behavior: "smooth",
+      });
+    });
+  };
+
   const moveProject = (direction: number) => {
-    setActiveProject(
-      (current) => (current + direction + projects.length) % projects.length,
-    );
+    showProject(activeProject + direction);
+  };
+
+  const handleProjectRailScroll = () => {
+    if (!window.matchMedia("(max-width: 760px)").matches) return;
+    if (projectScrollFrameRef.current !== null) {
+      window.cancelAnimationFrame(projectScrollFrameRef.current);
+    }
+
+    projectScrollFrameRef.current = window.requestAnimationFrame(() => {
+      const rail = projectRailRef.current;
+      if (!rail) return;
+
+      const railRect = rail.getBoundingClientRect();
+      const railCenter = railRect.left + railRect.width / 2;
+      let closestIndex = 0;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      Array.from(rail.children).forEach((child, index) => {
+        const childRect = child.getBoundingClientRect();
+        const childCenter = childRect.left + childRect.width / 2;
+        const distance = Math.abs(childCenter - railCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      setActiveProject((current) =>
+        current === closestIndex ? current : closestIndex,
+      );
+      projectScrollFrameRef.current = null;
+    });
   };
 
   return (
@@ -423,7 +487,13 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        <div id="projects" className={styles.projectRail} data-reveal>
+        <div
+          id="projects"
+          ref={projectRailRef}
+          className={styles.projectRail}
+          onScroll={handleProjectRailScroll}
+          data-reveal
+        >
           {projects.map((project, index) => (
             <article
               key={project.slug}
@@ -452,7 +522,9 @@ export default function LandingPage() {
         </div>
 
         <div className={styles.projectControls} aria-label="Project controls">
-          <span>{String(activeProject + 1).padStart(2, "0")} / 05</span>
+          <span aria-live="polite">
+            {String(activeProject + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+          </span>
           <button
             type="button"
             onClick={() => moveProject(-1)}
