@@ -8,12 +8,21 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+const portfolioDescription =
+  "The official architectural portfolio of Eugene Sasu Appiah, highlighting concept development, Revit modelling, architectural visualization and thoughtful project delivery.";
+
 export const metadata: Metadata = {
   metadataBase: getSiteUrl(),
   title: "Vanta Forma — Architecture with Intention",
-  description:
-    "Vanta Forma is an architecture studio shaping enduring spaces through form, light, material and purpose.",
-  keywords: ["architecture", "design studio", "Accra", "Ghana", "Vanta Forma"],
+  description: portfolioDescription,
+  keywords: [
+    "architectural portfolio",
+    "student architect",
+    "Eugene Sasu Appiah",
+    "Accra",
+    "Ghana",
+    "Vanta Forma",
+  ],
   alternates: {
     canonical: "/",
   },
@@ -22,8 +31,7 @@ export const metadata: Metadata = {
     locale: "en_GH",
     siteName: "Vanta Forma",
     title: "Vanta Forma — Architecture with Intention",
-    description:
-      "Vanta Forma is an architecture studio shaping enduring spaces through form, light, material and purpose.",
+    description: portfolioDescription,
     url: "/",
     images: [
       {
@@ -37,8 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Vanta Forma — Architecture with Intention",
-    description:
-      "Vanta Forma is an architecture studio shaping enduring spaces through form, light, material and purpose.",
+    description: portfolioDescription,
     images: ["/images/vanta-forma-social-preview.png"],
   },
   icons: {
