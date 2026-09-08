@@ -138,7 +138,7 @@ export default function LandingPage() {
   const heroRef = useRef<HTMLElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const projectRailRef = useRef<HTMLDivElement>(null);
-  const projectScrollFrameRef = useRef<number | null>(null);
+  const projectScrollEndTimerRef = useRef<number | null>(null);
   const introDecisionMadeRef = useRef(false);
   const shouldPlayIntroRef = useRef(true);
 
@@ -269,8 +269,8 @@ export default function LandingPage() {
 
   useEffect(
     () => () => {
-      if (projectScrollFrameRef.current !== null) {
-        window.cancelAnimationFrame(projectScrollFrameRef.current);
+      if (projectScrollEndTimerRef.current !== null) {
+        window.clearTimeout(projectScrollEndTimerRef.current);
       }
     },
     [],
@@ -309,11 +309,11 @@ export default function LandingPage() {
 
   const handleProjectRailScroll = () => {
     if (!window.matchMedia("(max-width: 760px)").matches) return;
-    if (projectScrollFrameRef.current !== null) {
-      window.cancelAnimationFrame(projectScrollFrameRef.current);
+    if (projectScrollEndTimerRef.current !== null) {
+      window.clearTimeout(projectScrollEndTimerRef.current);
     }
 
-    projectScrollFrameRef.current = window.requestAnimationFrame(() => {
+    projectScrollEndTimerRef.current = window.setTimeout(() => {
       const rail = projectRailRef.current;
       if (!rail) return;
 
@@ -336,8 +336,14 @@ export default function LandingPage() {
       setActiveProject((current) =>
         current === closestIndex ? current : closestIndex,
       );
-      projectScrollFrameRef.current = null;
-    });
+      projectScrollEndTimerRef.current = null;
+    }, 120);
+  };
+
+  const handleProjectFocus = (index: number) => {
+    if (window.matchMedia("(min-width: 761px)").matches) {
+      setActiveProject(index);
+    }
   };
 
   return (
@@ -500,7 +506,7 @@ export default function LandingPage() {
               className={`${styles.projectCard} ${index === activeProject ? styles.projectActive : ""}`}
               style={{ backgroundImage: `url(${project.hero})` }}
               onMouseEnter={() => setActiveProject(index)}
-              onFocus={() => setActiveProject(index)}
+              onFocus={() => handleProjectFocus(index)}
             >
               <Link
                 href={`/projects/${project.slug}`}

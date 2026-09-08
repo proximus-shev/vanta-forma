@@ -7,6 +7,7 @@ export type PortfolioProject = {
   location: string;
   status: string;
   collaborator?: string;
+  designPartner?: string;
   summary: string;
   description: string[];
   concept: string;
@@ -267,6 +268,55 @@ const projectCatalog: Omit<PortfolioProject, "number">[] = [
     ],
   },
   {
+    slug: "layered-frames",
+    title: "Layered Frames",
+    type: "Residential",
+    typeDescription:
+      "A three-level contemporary residence shaped by layered planes, projecting balconies and vertical fins.",
+    location: "Adjringanor, Accra",
+    status: "Real project",
+    designPartner: "Reginald Ashong",
+    summary:
+      "A contemporary three-level home balancing framed views, openness and privacy through a layered architectural language.",
+    description: [
+      "Layered Frames is driven by horizontal planes, projecting balconies and vertical fins that frame views and give the residence a strong contemporary identity. These elements create depth, shade, privacy and a clear hierarchy across the facade.",
+      "The design balances openness and privacy, light and shade, simplicity and character. Large glazed openings connect the interior to the outdoors, while screens, overhangs and controlled projections provide protection and comfort, creating a home that feels modern, calm and functional.",
+      "Across its three levels, the residence progresses from shared and functional spaces at ground level to private family rooms above, culminating in a secluded penthouse retreat.",
+    ],
+    concept:
+      "Layered horizontal planes, projecting balconies and vertical fins frame views while creating depth, shade, privacy and a clear facade hierarchy.",
+    inspiration:
+      "Modern living in balance: openness and privacy, light and shade, simplicity and character brought together within a calm contemporary home.",
+    planRationale:
+      "The ground floor forms the primary social and functional zone; a family lounge organizes three bedrooms on the first floor; and the second-floor penthouse provides a secluded master suite, private living area and kitchenette.",
+    program: [
+      "Three-level residence",
+      "Main living, kitchen and dining spaces",
+      "Ground-floor bedroom and home office",
+      "Family lounge and three first-floor bedrooms",
+      "Private penthouse suite with living area and kitchenette",
+    ],
+    hero: "/images/projects/layered-frames/hero.webp",
+    plates: [
+      {
+        src: "/images/projects/layered-frames/gallery-02.webp",
+        alt: "Layered Frames entrance court, projecting balcony and vertical fins at dusk",
+      },
+      {
+        src: "/images/projects/layered-frames/gallery-03.webp",
+        alt: "Layered Frames stacked balconies and glazed openings",
+      },
+      {
+        src: "/images/projects/layered-frames/gallery-04.webp",
+        alt: "Layered Frames rear three-quarter view with layered facade screens",
+      },
+      {
+        src: "/images/projects/layered-frames/gallery-05.webp",
+        alt: "Layered Frames front elevation, gate and illuminated landscape",
+      },
+    ],
+  },
+  {
     slug: "house-of-god",
     title: "House of God",
     type: "Religious / Institutional",
@@ -393,7 +443,11 @@ const projectCatalog: Omit<PortfolioProject, "number">[] = [
   },
 ];
 
-const primaryProjectSlugs = ["executive-residence", "box-and-bar"];
+const primaryProjectSlugs = [
+  "executive-residence",
+  "box-and-bar",
+  "layered-frames",
+];
 
 export const projects: PortfolioProject[] = [
   ...primaryProjectSlugs.flatMap((slug) =>

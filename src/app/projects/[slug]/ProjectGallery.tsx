@@ -110,7 +110,10 @@ export default function ProjectGallery({
       aria-labelledby="gallery-title"
     >
       <div className={styles.galleryHeading}>
-        <h2 id="gallery-title"><i /> Project gallery</h2>
+        <h2 id="gallery-title">
+          <i /> Project gallery
+          <span className={styles.galleryProjectTitle}>— {projectTitle}</span>
+        </h2>
         <a href="#gallery-track">
           View all images <GalleryArrow />
         </a>
@@ -154,8 +157,7 @@ export default function ProjectGallery({
                 />
               </button>
               <figcaption>
-                <span>Image {String(index + 1).padStart(2, "0")}</span>
-                <span>{projectTitle}</span>
+                Image {String(index + 1).padStart(2, "0")}
               </figcaption>
             </figure>
           ))}
