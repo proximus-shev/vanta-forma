@@ -659,8 +659,10 @@ export default function LandingPage() {
               and enduring together.
             </p>
             <a
-              href="mailto:eugeneshevey@gmail.com?subject=Vanta%20Forma%20Project%20Inquiry"
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=eugeneshevey%40gmail.com&su=Vanta%20Forma%20Project%20Inquiry"
               className={styles.footerButton}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               Start a conversation <Arrow />
             </a>
@@ -670,9 +672,11 @@ export default function LandingPage() {
             <small>Direct contact</small>
             <div className={styles.footerBacklinks} aria-label="Contact and social links">
               <a
-                href="mailto:eugeneshevey@gmail.com"
-                aria-label="Email Vanta Forma at eugeneshevey@gmail.com"
-                title="Email: eugeneshevey@gmail.com"
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=eugeneshevey%40gmail.com"
+                aria-label="Compose an email to Vanta Forma in Gmail"
+                title="Open Gmail: eugeneshevey@gmail.com"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <GmailIcon />
               </a>
