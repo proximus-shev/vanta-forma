@@ -317,6 +317,57 @@ const projectCatalog: Omit<PortfolioProject, "number">[] = [
     ],
   },
   {
+    slug: "garden-embrace-residence",
+    title: "Garden Embrace Residence",
+    type: "Residential",
+    typeDescription:
+      "A single-storey contemporary residence organized around a protected garden terrace.",
+    location: "Takoradi, Ghana",
+    status: "Real project — design stage",
+    summary:
+      "A calm contemporary home whose wings gather around a protected garden at the heart of daily life.",
+    description: [
+      "Garden Embrace Residence is conceived as an embrace around nature. Its wings frame a protected garden terrace that becomes the green heart of the home, giving the architecture a clear centre while creating an intimate outdoor place for everyday living.",
+      "Large windows, shaded spaces and landscaped edges maintain a visual connection between the major rooms and the garden. Simple modern forms, warm earthy accents, daylight, ventilation and layered planting allow indoor and outdoor spaces to flow naturally into one another.",
+    ],
+    concept:
+      "The house embraces nature through wings that frame a protected garden terrace as the green heart of the home.",
+    inspiration:
+      "Living in harmony with nature, with architecture acting as a quiet frame for daylight, ventilation, warm materials and layered planting.",
+    planRationale:
+      "The residential wings gather around a sheltered central terrace so the home gains privacy, shade and a continuous visual relationship with the garden.",
+    program: [
+      "Single-storey residence",
+      "Protected garden terrace",
+      "Garden-facing living spaces",
+      "Shaded transitional areas",
+      "Landscape-integrated perimeter",
+    ],
+    hero: "/images/projects/garden-embrace-residence/hero.webp",
+    plates: [
+      {
+        src: "/images/projects/garden-embrace-residence/gallery-02.webp",
+        alt: "Garden Embrace Residence framed passage opening toward the central terrace",
+      },
+      {
+        src: "/images/projects/garden-embrace-residence/gallery-03.webp",
+        alt: "Garden Embrace Residence entrance volumes within the landscaped grounds",
+      },
+      {
+        src: "/images/projects/garden-embrace-residence/gallery-04.webp",
+        alt: "Garden Embrace Residence recessed entrance and warm window frames",
+      },
+      {
+        src: "/images/projects/garden-embrace-residence/gallery-05.webp",
+        alt: "Garden Embrace Residence arrival court and garden approach",
+      },
+      {
+        src: "/images/projects/garden-embrace-residence/gallery-06.webp",
+        alt: "Garden Embrace Residence quiet garden elevation with framed windows",
+      },
+    ],
+  },
+  {
     slug: "house-of-god",
     title: "House of God",
     type: "Religious / Institutional",
@@ -447,6 +498,7 @@ const primaryProjectSlugs = [
   "executive-residence",
   "box-and-bar",
   "layered-frames",
+  "garden-embrace-residence",
 ];
 
 export const projects: PortfolioProject[] = [
