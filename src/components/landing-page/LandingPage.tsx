@@ -138,6 +138,9 @@ export default function LandingPage() {
   const heroRef = useRef<HTMLElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const projectRailRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuCloseRef = useRef<HTMLButtonElement>(null);
   const projectScrollEndTimerRef = useRef<number | null>(null);
   const introDecisionMadeRef = useRef(false);
   const shouldPlayIntroRef = useRef(true);
@@ -224,6 +227,52 @@ export default function LandingPage() {
       document.body.style.overflow = "";
     };
   }, [introPhase, menuOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    mobileMenuCloseRef.current?.focus();
+
+    const handleMenuKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMenuOpen(false);
+        window.requestAnimationFrame(() =>
+          menuButtonRef.current?.focus({ preventScroll: true }),
+        );
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const controls = mobileMenuRef.current?.querySelectorAll<HTMLElement>(
+        "button, a[href]",
+      );
+      if (!controls?.length) return;
+
+      const firstControl = controls[0];
+      const lastControl = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === firstControl) {
+        event.preventDefault();
+        lastControl.focus();
+      } else if (!event.shiftKey && document.activeElement === lastControl) {
+        event.preventDefault();
+        firstControl.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleMenuKeyDown);
+    return () => document.removeEventListener("keydown", handleMenuKeyDown);
+  }, [menuOpen]);
+
+  const closeMenu = (restoreFocus = true) => {
+    setMenuOpen(false);
+    if (restoreFocus) {
+      window.requestAnimationFrame(() =>
+        menuButtonRef.current?.focus({ preventScroll: true }),
+      );
+    }
+  };
 
   useEffect(() => {
     const nodes = document.querySelectorAll<HTMLElement>("[data-reveal]");
@@ -385,6 +434,7 @@ export default function LandingPage() {
             <span />
           </div>
           <button
+            ref={menuButtonRef}
             type="button"
             className={styles.skipIntro}
             onClick={skipIntro}
@@ -461,12 +511,12 @@ export default function LandingPage() {
           <span>experience.</span>
         </div>
 
-        <div className={styles.heroIndex} aria-label="Featured slide 1 of 5">
-          <strong>01</strong>
+        <div className={styles.heroIndex} aria-hidden="true">
+          <strong>VF</strong>
           <span>
             <i />
           </span>
-          <small>05</small>
+          <small>Portfolio</small>
         </div>
 
         <a href="#work" className={styles.scrollCue}>
@@ -475,8 +525,8 @@ export default function LandingPage() {
             <b />
           </i>
         </a>
-        <p className={styles.heroCounter}>
-          01 <i /> 05
+        <p className={styles.heroCounter} aria-hidden="true">
+          Accra <i /> Ghana
         </p>
       </section>
 
@@ -585,7 +635,7 @@ export default function LandingPage() {
             <span>Documentation</span>
           </div>
           <a
-            href="#contact"
+            href="#skills"
             className={`${styles.textLink} ${styles.darkLink}`}
           >
             Discover our approach <Arrow />
@@ -756,23 +806,32 @@ export default function LandingPage() {
 
       <div
         id="mobile-menu"
+        ref={mobileMenuRef}
         className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ""}`}
         aria-hidden={!menuOpen}
+        role="dialog"
+        aria-modal={menuOpen ? "true" : undefined}
+        aria-label="Navigation menu"
       >
         <div className={styles.mobileMenuTop}>
           <BrandMark />
           <button
+            ref={mobileMenuCloseRef}
+            className={styles.mobileMenuClose}
             type="button"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => closeMenu()}
             aria-label="Close menu"
           >
-            Close <i />
-            <i />
+            <span>Close</span>
+            <span className={styles.mobileMenuCloseIcon} aria-hidden="true">
+              <i />
+              <i />
+            </span>
           </button>
         </div>
         <nav aria-label="Mobile navigation">
           {navItems.map(([label, href], index) => (
-            <a key={label} href={href} onClick={() => setMenuOpen(false)}>
+            <a key={label} href={href} onClick={() => closeMenu(false)}>
               <span>0{index + 1}</span>
               {label}
               <Arrow />

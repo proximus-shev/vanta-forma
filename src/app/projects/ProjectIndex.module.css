@@ -73,17 +73,30 @@
 .orbits { position: absolute; top: -76%; left: 38%; width: 64vw; min-width: 760px; aspect-ratio: 1; border: 1px solid rgba(185,154,82,.1); border-radius: 50%; box-shadow: 0 0 0 7.5vw rgba(185,154,82,.032), 0 0 0 15vw rgba(185,154,82,.025), 0 0 0 22.5vw rgba(185,154,82,.02); pointer-events: none; }
 .introTitle,
 .introCopy,
-.filterJump { position: relative; z-index: 1; }
+.filterControl { position: relative; z-index: 4; }
 .introTitle > p { margin: 0 0 22px; color: var(--gold); font-size: .76rem; letter-spacing: .19em; text-transform: uppercase; }
 .intro h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(3.9rem, 5.5vw, 6.8rem); font-weight: 400; line-height: .84; letter-spacing: -.045em; text-transform: uppercase; }
 .intro h1 span,
 .intro h1 strong { display: block; font: inherit; }
 .intro h1 strong { margin-top: .12em; color: var(--gold); }
 .introCopy { max-width: 350px; margin: 20px 0 0; color: rgba(241,238,230,.78); font-size: 1rem; line-height: 1.75; }
-.filterJump { display: inline-flex; min-height: 50px; gap: 24px; justify-self: end; align-items: center; padding: 0 20px; border: 1px solid rgba(185,154,82,.58); background: rgba(4,4,4,.3); color: var(--gold); cursor: pointer; font-size: .76rem; letter-spacing: .18em; text-transform: uppercase; transition: border-color .2s ease, background .2s ease; }
+.filterControl { justify-self: end; }
+.filterJump { display: inline-flex; min-height: 50px; gap: 24px; align-items: center; padding: 0 20px; border: 1px solid rgba(185,154,82,.58); background: rgba(4,4,4,.3); color: var(--gold); cursor: pointer; font-size: .76rem; letter-spacing: .18em; text-transform: uppercase; transition: border-color .2s ease, background .2s ease; }
 .filterJump:hover,
 .filterJump:focus-visible { border-color: var(--gold); background: rgba(185,154,82,.1); }
 .filterJump svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.25; }
+.filterBackdrop { position: fixed; z-index: 1; inset: 0; display: block; width: 100%; height: 100%; padding: 0; border: 0; background: rgba(0,0,0,.58); backdrop-filter: blur(3px); }
+.filterPanel { position: fixed; z-index: 2; top: 50%; right: clamp(20px,6vw,90px); width: min(330px,calc(100vw - 40px)); max-height: calc(100dvh - 48px); overflow-y: auto; padding: 18px; border: 1px solid rgba(185,154,82,.42); border-radius: 18px; background: rgba(7,8,6,.98); box-shadow: 0 22px 70px rgba(0,0,0,.58); transform: translateY(-50%); }
+.filterPanelHeader { display: flex; justify-content: space-between; align-items: center; padding: 2px 2px 14px; border-bottom: 1px solid rgba(225,211,178,.14); color: var(--ivory); font-size: .72rem; letter-spacing: .13em; text-transform: uppercase; }
+.filterPanelHeader strong { color: var(--gold); font-size: .64rem; font-weight: 500; }
+.filterOptions { display: grid; margin-top: 8px; }
+.filterOptions button { display: flex; min-height: 44px; justify-content: space-between; align-items: center; padding: 0 4px; border: 0; border-bottom: 1px solid rgba(225,211,178,.1); background: transparent; color: rgba(241,238,230,.68); cursor: pointer; font: inherit; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; transition: color .2s ease, padding .2s ease; }
+.filterOptions button:hover,
+.filterOptions button:focus-visible,
+.filterOptions .activeFilterOption { padding-right: 8px; padding-left: 8px; color: var(--gold); }
+.filterOptions small { color: rgba(241,238,230,.46); font-size: .7rem; }
+.filterOptions .activeFilterOption small { color: var(--gold); }
+.clearFilter { width: 100%; min-height: 42px; margin-top: 14px; border: 1px solid rgba(185,154,82,.42); border-radius: 999px; background: rgba(185,154,82,.08); color: var(--gold); cursor: pointer; font: inherit; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; }
 
 .collection { padding: 0 clamp(18px, 3.7vw, 62px) clamp(62px, 6vw, 100px); background: linear-gradient(180deg, #070806, #040504); }
 .controls { display: flex; min-height: 92px; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); }
@@ -111,8 +124,6 @@
 .cardImage img { object-fit: cover; filter: saturate(.68) brightness(.82); transition: transform .75s cubic-bezier(.16,1,.3,1), filter .35s ease; }
 .card:hover .cardImage img { transform: scale(1.035); filter: saturate(.85) brightness(.9); }
 .imageShade { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 64%, rgba(3,3,3,.24)); }
-.bookmark { position: absolute; top: 16px; right: 16px; display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid rgba(185,154,82,.5); border-radius: 50%; background: rgba(4,4,4,.78); color: var(--gold); }
-.bookmark svg { width: 17px; fill: none; stroke: currentColor; stroke-width: 1.2; }
 
 .cardContent { display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding: 20px 22px 24px; }
 .cardNumberRow { display: flex; width: 100%; justify-content: space-between; align-items: center; color: var(--gold); }
@@ -123,7 +134,7 @@
 .cardType { margin-top: 10px; color: var(--gold); font-size: .75rem; letter-spacing: .2em; line-height: 1.45; text-transform: uppercase; }
 .cardDetails { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; margin-top: 11px; color: rgba(241,238,230,.74); font-size: .86rem; line-height: 1.5; }
 .cardDetails i { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); }
-.cardSummary { display: none; max-width: 700px; margin-top: 15px; color: rgba(241,238,230,.76); font-size: 1rem; line-height: 1.68; }
+.cardSummary { display: -webkit-box; max-width: 700px; overflow: hidden; margin-top: 15px; color: rgba(241,238,230,.76); font-size: .92rem; line-height: 1.62; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
 
 .projectGrid.listView { grid-template-columns: 1fr; gap: 10px; }
 .listView .card { min-height: 260px; }
@@ -131,7 +142,7 @@
 .listView .cardImage { height: 100%; aspect-ratio: auto; }
 .listView .cardContent { justify-content: center; padding: clamp(28px, 4vw, 60px); }
 .listView .cardContent > strong { font-size: clamp(2rem, 3.2vw, 4rem); }
-.listView .cardSummary { display: block; }
+.listView .cardSummary { display: block; font-size: 1rem; -webkit-line-clamp: initial; }
 
 .footer { display: grid; grid-template-columns: 1fr auto 1fr; gap: 30px; align-items: center; padding: 42px clamp(20px, 3.7vw, 62px); border-top: 1px solid var(--line); background: #030303; color: rgba(255,255,255,.68); font-size: .76rem; letter-spacing: .13em; text-transform: uppercase; }
 .footer p { margin: 0; }
@@ -148,7 +159,7 @@
   .header { grid-template-columns: 1fr auto; }
   .desktopNav { display: none; }
   .intro { min-height: 460px; grid-template-columns: 1.2fr .8fr; }
-  .filterJump { justify-self: start; }
+  .filterControl { justify-self: start; }
   .projectGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .controls { align-items: flex-start; padding: 28px 0; }
   .categories { max-width: 620px; flex-wrap: wrap; row-gap: 18px; }
@@ -168,7 +179,9 @@
   .introTitle > p { display: inline-flex; width: fit-content; min-height: 38px; align-items: center; margin-bottom: 25px; padding: 0 15px; border: 1px solid rgba(185,154,82,.62); border-radius: 999px; background: rgba(4,4,4,.38); font-size: .66rem; }
   .intro h1 { max-width: 560px; font-size: clamp(3.15rem,14vw,5.2rem); line-height: .88; }
   .introCopy { max-width: 500px; margin-top: 0; font-size: .96rem; line-height: 1.68; }
-  .filterJump { width: fit-content; min-height: 48px; justify-self: start; padding: 0 18px; }
+  .filterControl { justify-self: start; }
+  .filterJump { width: fit-content; min-height: 48px; padding: 0 18px; }
+  .filterPanel { top: auto; right: 12px; bottom: 12px; left: 12px; width: auto; max-height: calc(100dvh - 24px); padding: 20px; border-radius: 22px; transform: none; }
   .collection { padding: 18px 18px 64px; }
   .controls { min-height: 0; gap: 20px; flex-direction: column; margin-bottom: 16px; padding: 18px; border: 1px solid rgba(185,154,82,.3); border-radius: 14px; background: rgba(9,10,8,.84); }
   .categories { width: 100%; gap: 8px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 3px; scrollbar-width: none; }
@@ -180,16 +193,20 @@
   .projectGrid { grid-template-columns: 1fr; gap: 14px; }
   .card { overflow: hidden; border-color: rgba(185,154,82,.28); border-radius: 16px; }
   .cardImage { aspect-ratio: 16 / 10; }
-  .bookmark { top: 14px; right: 14px; width: 40px; height: 40px; }
   .cardContent { padding: 22px 20px 25px; }
   .cardContent > strong { margin-top: 14px; font-size: clamp(1.65rem,8vw,2.4rem); }
   .cardType { margin-top: 9px; font-size: .7rem; }
   .cardDetails { margin-top: 10px; font-size: .82rem; }
   .listView .card { min-height: 0; }
-  .listView .card > a { display: flex; }
-  .listView .cardImage { aspect-ratio: 16 / 10; }
-  .listView .cardContent { padding: 22px 20px 25px; }
-  .listView .cardContent > strong { font-size: clamp(1.65rem,8vw,2.4rem); }
+  .listView .card > a { display: grid; grid-template-columns: minmax(118px,36%) 1fr; }
+  .listView .cardImage { height: 100%; min-height: 180px; aspect-ratio: auto; }
+  .listView .cardContent { justify-content: center; padding: 18px 16px; }
+  .listView .cardContent > strong { margin-top: 10px; font-size: clamp(1.25rem,5.6vw,1.75rem); }
+  .listView .cardType { margin-top: 8px; font-size: .62rem; }
+  .listView .cardDetails { gap: 6px; margin-top: 8px; font-size: .72rem; }
+  .listView .cardDetails i,
+  .listView .cardDetails span:last-child { display: none; }
+  .listView .cardSummary { display: none; }
   .footer { display: flex; gap: 14px; flex-direction: column; align-items: flex-start; padding: 30px 20px; border-top-color: rgba(185,154,82,.28); background: radial-gradient(circle at 90% 100%,rgba(185,154,82,.08),transparent 38%),#030303; }
   .footer span { justify-self: auto; }
 }
@@ -197,7 +214,9 @@
 @media (max-width: 480px) {
   .intro { padding-top: 44px; }
   .intro h1 { font-size: 14vw; }
-  .filterJump { width: 100%; justify-content: space-between; }
+  .filterControl,
+  .filterJump { width: 100%; }
+  .filterJump { justify-content: space-between; }
   .categories { display: flex; }
   .viewControls { align-self: flex-start; }
   .cardImage { aspect-ratio: 4 / 3; }

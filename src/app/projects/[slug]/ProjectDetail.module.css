@@ -109,7 +109,7 @@
 .heroControls > a:focus-visible { background: rgba(185,154,82,.16); }
 .heroControls svg { width: 20px; fill: none; stroke: var(--gold); stroke-width: 1; }
 .arrowBack { transform: rotate(180deg); }
-.gridControl { grid-template-columns: repeat(3,3px) !important; grid-auto-rows: 3px; gap: 3px; }
+.gridControl { grid-template-columns: repeat(3,3px) !important; grid-auto-rows: 3px; gap: 3px; place-content: center; padding: 0; }
 .gridControl i { width: 3px; height: 3px; background: var(--gold); }
 .mobileHeroFooter { display: none; }
 
@@ -135,9 +135,10 @@
 .gallery { padding: 26px clamp(20px, 3.5vw, 56px) 22px; border-bottom: 1px solid var(--line); background: #030303; }
 .galleryHeading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
 .galleryHeading h2 { margin: 0; }
-.galleryHeading > a { display: flex; gap: 13px; align-items: center; color: var(--gold); font-size: .76rem; letter-spacing: .14em; text-decoration: none; text-transform: uppercase; }
-.galleryHeading > a svg { width: 23px; fill: none; stroke: currentColor; stroke-width: 1; transition: transform .2s ease; }
-.galleryHeading > a:hover svg { transform: translateX(4px); }
+.galleryViewAll { display: flex; gap: 13px; align-items: center; padding: 0; border: 0; background: transparent; color: var(--gold); cursor: pointer; font: inherit; font-size: .76rem; letter-spacing: .14em; text-transform: uppercase; }
+.galleryViewAll svg { width: 23px; fill: none; stroke: currentColor; stroke-width: 1; transition: transform .2s ease; }
+.galleryViewAll:hover svg,
+.galleryViewAll:focus-visible svg { transform: translateX(4px); }
 .galleryProjectTitle { display: none; }
 .galleryStage { position: relative; }
 .galleryRail { display: flex; gap: 3px; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; }
@@ -180,6 +181,23 @@
 .galleryPagination button:hover::before,
 .galleryPagination button:focus-visible::before { background: rgba(185,154,82,.68); }
 .galleryPagination .galleryDotActive::before { width: 27px; background: var(--gold); }
+.lightbox { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: clamp(16px,3vw,42px); background: rgba(2,2,2,.94); backdrop-filter: blur(16px); }
+.lightboxFrame { position: relative; display: grid; width: min(1380px,100%); height: min(880px,calc(100dvh - 48px)); grid-template-rows: minmax(0,1fr) auto; overflow: hidden; border: 1px solid rgba(185,154,82,.42); border-radius: 22px; background: #080907; box-shadow: 0 28px 90px rgba(0,0,0,.7); }
+.lightboxImage { position: relative; min-height: 0; background: #050505; }
+.lightboxImage img { object-fit: contain; }
+.lightboxClose { position: absolute; z-index: 2; top: 16px; right: 16px; width: 46px; height: 46px; padding: 0; border: 1px solid rgba(185,154,82,.58); border-radius: 50%; background: rgba(3,3,3,.82); color: var(--gold); cursor: pointer; }
+.lightboxClose i { position: absolute; top: 50%; left: 12px; width: 20px; height: 1px; background: currentColor; transform: rotate(45deg); }
+.lightboxClose i:last-child { transform: rotate(-45deg); }
+.lightboxFooter { display: flex; min-height: 82px; justify-content: space-between; align-items: center; padding: 14px 18px 14px 24px; border-top: 1px solid rgba(225,211,178,.14); }
+.lightboxFooter p { display: flex; gap: 12px; flex-direction: column; margin: 0; }
+.lightboxFooter p span { color: var(--ivory); font-family: Georgia,"Times New Roman",serif; font-size: 1.1rem; text-transform: uppercase; }
+.lightboxFooter p small { color: var(--gold); font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; }
+.lightboxFooter > div { display: flex; gap: 10px; }
+.lightboxFooter > div button { display: grid; width: 46px; height: 46px; place-items: center; padding: 0; border: 1px solid rgba(185,154,82,.46); border-radius: 50%; background: transparent; color: var(--gold); cursor: pointer; }
+.lightboxFooter > div button:hover:not(:disabled),
+.lightboxFooter > div button:focus-visible:not(:disabled) { background: rgba(185,154,82,.14); }
+.lightboxFooter > div button:disabled { opacity: .3; cursor: default; }
+.lightboxFooter svg { width: 19px; fill: none; stroke: currentColor; stroke-width: 1; }
 
 .details { display: grid; grid-template-columns: 30% 42% 28%; border-bottom: 1px solid var(--line); background: var(--panel); }
 .detailTable,
@@ -342,7 +360,12 @@
   .mobileHeroFooter > a { gap: 7px; font-size: .56rem; letter-spacing: .11em; }
   .insights { grid-template-columns: 1fr; }
   .insights article { min-height: 0; border-right: 0; }
-  .galleryHeading > a { font-size: .74rem; }
+  .galleryViewAll { font-size: .74rem; }
+  .lightbox { padding: 8px; }
+  .lightboxFrame { height: calc(100dvh - 16px); border-radius: 16px; }
+  .lightboxClose { top: 12px; right: 12px; }
+  .lightboxFooter { min-height: 76px; padding: 12px 14px 12px 16px; }
+  .lightboxFooter p span { max-width: 48vw; overflow: hidden; font-size: .9rem; text-overflow: ellipsis; white-space: nowrap; }
   .nextContent strong { font-size: 2.3rem; }
   .nextArrow { display: none; }
 }

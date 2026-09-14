@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import ResponsiveMenu from "@/components/ResponsiveMenu";
 import { projects } from "@/data/projects";
 import ProjectCollection from "./ProjectCollection";
 import styles from "./ProjectIndex.module.css";
@@ -77,22 +78,13 @@ export default function ProjectsPage() {
           ))}
         </nav>
 
-        <details className={styles.menu}>
-          <summary aria-label="Open navigation menu">
-            <span aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </span>
-          </summary>
-          <nav aria-label="Menu navigation">
-            {navigation.map((item) => (
-              <Link href={item.href} key={item.label}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </details>
+        <ResponsiveMenu
+          items={navigation}
+          className={styles.menu}
+          activeLabel="Work"
+          activeClassName={styles.activeNav}
+          navigationLabel="Menu navigation"
+        />
       </header>
 
       <ProjectCollection projects={projects} />

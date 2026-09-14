@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import ResponsiveMenu from "@/components/ResponsiveMenu";
 import { notFound } from "next/navigation";
 import { getProject, projects } from "@/data/projects";
 import ProjectGallery from "./ProjectGallery";
@@ -142,16 +143,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           ))}
         </nav>
 
-        <details className={styles.menu}>
-          <summary aria-label="Open project navigation">
-            <span aria-hidden="true"><i /><i /><i /></span>
-          </summary>
-          <nav aria-label="Compact navigation">
-            {navigation.map(([label, href]) => (
-              <Link key={label} href={href}>{label}</Link>
-            ))}
-          </nav>
-        </details>
+        <ResponsiveMenu
+          items={navigation.map(([label, href]) => ({ label, href }))}
+          className={styles.menu}
+          activeLabel="Work"
+          activeClassName={styles.activeNav}
+          navigationLabel="Project navigation"
+        />
       </header>
 
       <section className={styles.hero} aria-labelledby="project-title">

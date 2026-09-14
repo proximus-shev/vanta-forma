@@ -2,16 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { PortfolioProject } from "@/data/projects";
 import styles from "./ProjectIndex.module.css";
 
-type ProjectCategory = "All" | "Residential" | "Interior" | "Religious" | "Renovation";
+type ProjectCategory =
+  | "All"
+  | "Residential"
+  | "Hospitality"
+  | "Interior"
+  | "Religious"
+  | "Renovation";
 type ProjectView = "grid" | "list";
 
 const categories: ProjectCategory[] = [
   "All",
   "Residential",
+  "Hospitality",
   "Interior",
   "Religious",
   "Renovation",
@@ -49,14 +56,6 @@ function ListIcon() {
   );
 }
 
-function BookmarkIcon() {
-  return (
-    <svg viewBox="0 0 20 20" aria-hidden="true">
-      <path d="M5 3.5h10v13l-5-3-5 3z" />
-    </svg>
-  );
-}
-
 function ArrowIcon() {
   return (
     <svg viewBox="0 0 28 12" aria-hidden="true">
@@ -68,7 +67,12 @@ function ArrowIcon() {
 function matchesCategory(project: PortfolioProject, category: ProjectCategory) {
   if (category === "All") return true;
 
-  return project.type.toLowerCase().includes(category.toLowerCase());
+  const projectType = project.type.toLowerCase();
+
+  if (category === "Renovation") return projectType.includes("renovation");
+  if (category === "Religious") return projectType.includes("religious");
+
+  return projectType === category.toLowerCase();
 }
 
 export default function ProjectCollection({
@@ -78,18 +82,88 @@ export default function ProjectCollection({
 }) {
   const [activeCategory, setActiveCategory] = useState<ProjectCategory>("All");
   const [projectView, setProjectView] = useState<ProjectView>("grid");
-  const filterBarRef = useRef<HTMLDivElement>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filterControlRef = useRef<HTMLDivElement>(null);
+  const filterButtonRef = useRef<HTMLButtonElement>(null);
+  const filterPanelRef = useRef<HTMLDivElement>(null);
 
   const visibleProjects = useMemo(
     () => projects.filter((project) => matchesCategory(project, activeCategory)),
     [activeCategory, projects],
   );
 
-  const moveToFilters = () => {
-    filterBarRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    filterBarRef.current?.querySelector<HTMLButtonElement>("button")?.focus({
-      preventScroll: true,
-    });
+  const categoriesWithCounts = useMemo(
+    () =>
+      categories.map((category) => ({
+        category,
+        count: projects.filter((project) => matchesCategory(project, category)).length,
+      })),
+    [projects],
+  );
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    filterPanelRef.current
+      ?.querySelector<HTMLButtonElement>("button[aria-pressed='true']")
+      ?.focus();
+
+    const closeOnOutsidePress = (event: PointerEvent) => {
+      if (!filterControlRef.current?.contains(event.target as Node)) {
+        setFiltersOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setFiltersOpen(false);
+        window.requestAnimationFrame(() =>
+          filterButtonRef.current?.focus({ preventScroll: true }),
+        );
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const controls = filterPanelRef.current?.querySelectorAll<HTMLButtonElement>(
+        "button:not(:disabled)",
+      );
+      if (!controls?.length) return;
+
+      const firstControl = controls[0];
+      const lastControl = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === firstControl) {
+        event.preventDefault();
+        lastControl.focus();
+      } else if (!event.shiftKey && document.activeElement === lastControl) {
+        event.preventDefault();
+        firstControl.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsidePress);
+    document.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("pointerdown", closeOnOutsidePress);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [filtersOpen]);
+
+  const selectCategory = (
+    category: ProjectCategory,
+    restoreFilterFocus = false,
+  ) => {
+    setActiveCategory(category);
+    setFiltersOpen(false);
+    if (restoreFilterFocus) {
+      window.requestAnimationFrame(() =>
+        filterButtonRef.current?.focus({ preventScroll: true }),
+      );
+    }
   };
 
   return (
@@ -105,18 +179,88 @@ export default function ProjectCollection({
         </div>
 
         <p className={styles.introCopy}>
-          A collection of spaces balancing form, function and feeling—each
+          A collection of spaces balancing form, function and feeling, each
           designed with purpose and crafted to endure.
         </p>
 
-        <button className={styles.filterJump} type="button" onClick={moveToFilters}>
-          <span>Filter projects</span>
-          <FilterIcon />
-        </button>
+        <div className={styles.filterControl} ref={filterControlRef}>
+          <button
+            ref={filterButtonRef}
+            className={styles.filterJump}
+            type="button"
+            onClick={() => setFiltersOpen((isOpen) => !isOpen)}
+            aria-expanded={filtersOpen}
+            aria-controls="project-filter-panel"
+          >
+            <span>
+              {activeCategory === "All"
+                ? "Filter projects"
+                : `Filter: ${activeCategory}`}
+            </span>
+            <FilterIcon />
+          </button>
+
+          {filtersOpen ? (
+            <>
+              <button
+                className={styles.filterBackdrop}
+                type="button"
+                onClick={() => {
+                  setFiltersOpen(false);
+                  window.requestAnimationFrame(() =>
+                    filterButtonRef.current?.focus({ preventScroll: true }),
+                  );
+                }}
+                aria-label="Close project filters"
+                tabIndex={-1}
+              />
+              <div
+                ref={filterPanelRef}
+                className={styles.filterPanel}
+                id="project-filter-panel"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Filter projects by category"
+              >
+                <div className={styles.filterPanelHeader}>
+                  <span>Choose a category</span>
+                  <strong>{String(projects.length).padStart(2, "0")} projects</strong>
+                </div>
+                <div className={styles.filterOptions}>
+                  {categoriesWithCounts.map(({ category, count }) => (
+                    <button
+                      className={
+                        activeCategory === category
+                          ? styles.activeFilterOption
+                          : undefined
+                      }
+                      key={category}
+                      type="button"
+                      onClick={() => selectCategory(category, true)}
+                      aria-pressed={activeCategory === category}
+                    >
+                      <span>{category}</span>
+                      <small>{String(count).padStart(2, "0")}</small>
+                    </button>
+                  ))}
+                </div>
+                {activeCategory !== "All" ? (
+                  <button
+                    className={styles.clearFilter}
+                    type="button"
+                    onClick={() => selectCategory("All", true)}
+                  >
+                    Clear filter
+                  </button>
+                ) : null}
+              </div>
+            </>
+          ) : null}
+        </div>
       </section>
 
       <section className={styles.collection} aria-label="Portfolio projects">
-        <div className={styles.controls} id="project-filters" ref={filterBarRef}>
+        <div className={styles.controls} id="project-filters">
           <div
             className={styles.categories}
             role="toolbar"
@@ -127,7 +271,7 @@ export default function ProjectCollection({
                 className={activeCategory === category ? styles.activeCategory : undefined}
                 key={category}
                 type="button"
-                onClick={() => setActiveCategory(category)}
+                onClick={() => selectCategory(category)}
                 aria-pressed={activeCategory === category}
               >
                 {category}
@@ -182,9 +326,6 @@ export default function ProjectCollection({
                     sizes="(max-width: 760px) 100vw, (max-width: 1180px) 50vw, 25vw"
                   />
                   <span className={styles.imageShade} />
-                  <span className={styles.bookmark} aria-hidden="true">
-                    <BookmarkIcon />
-                  </span>
                 </span>
 
                 <span className={styles.cardContent}>
