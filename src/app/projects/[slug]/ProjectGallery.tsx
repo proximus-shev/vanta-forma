@@ -312,7 +312,7 @@ export default function ProjectGallery({
                 alt={images[activeImage].alt}
                 fill
                 sizes="100vw"
-                quality={95}
+                quality={90}
               />
             </div>
 

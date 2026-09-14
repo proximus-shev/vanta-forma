@@ -434,7 +434,6 @@ export default function LandingPage() {
             <span />
           </div>
           <button
-            ref={menuButtonRef}
             type="button"
             className={styles.skipIntro}
             onClick={skipIntro}
@@ -465,6 +464,7 @@ export default function LandingPage() {
             ))}
           </nav>
           <button
+            ref={menuButtonRef}
             type="button"
             className={styles.menuButton}
             onClick={() => setMenuOpen(true)}

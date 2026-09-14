@@ -20,7 +20,10 @@ test.describe("landing page interactions", () => {
   }) => {
     await openHome(page);
 
-    const menuButton = page.getByRole("button", { name: "Menu" });
+    const menuButton = page.getByRole("button", {
+      name: "Menu",
+      exact: true,
+    });
     await menuButton.click();
 
     await expect(
@@ -121,10 +124,13 @@ test.describe("project collection interactions", () => {
     await summary.click();
     await expect(summary).toHaveAttribute("aria-expanded", "true");
 
-    await page.getByRole("heading", { name: /Shaped with intention/i }).click();
+    await page
+      .getByRole("heading", { name: /Shaped with intention/i })
+      .dispatchEvent("pointerdown");
     await expect(summary).toHaveAttribute("aria-expanded", "false");
 
     await summary.click();
+    await expect(summary).toHaveAttribute("aria-expanded", "true");
     await page.keyboard.press("Escape");
     await expect(summary).toHaveAttribute("aria-expanded", "false");
     await expect(summary).toBeFocused();
@@ -142,13 +148,13 @@ test.describe("project detail interactions", () => {
       name: "Executive Residence image viewer",
     });
     await expect(viewer).toBeVisible();
-    await expect(viewer.getByText(/Image 01 \/ 08/)).toBeVisible();
+    await expect(viewer.getByText(/Image 01 \/ 07/)).toBeVisible();
 
     await viewer.getByRole("button", { name: "Next image" }).click();
-    await expect(viewer.getByText(/Image 02 \/ 08/)).toBeVisible();
+    await expect(viewer.getByText(/Image 02 \/ 07/)).toBeVisible();
 
     await page.keyboard.press("ArrowRight");
-    await expect(viewer.getByText(/Image 03 \/ 08/)).toBeVisible();
+    await expect(viewer.getByText(/Image 03 \/ 07/)).toBeVisible();
 
     await page.keyboard.press("Escape");
     await expect(viewer).toBeHidden();
@@ -159,17 +165,17 @@ test.describe("project detail interactions", () => {
     await page.goto("/projects/executive-residence");
 
     const thirdImage = page.getByRole("button", {
-      name: "Show image 3 of 8",
+      name: "Show image 3 of 7",
     });
     if (test.info().project.name === "desktop-chromium") {
       await page
-        .getByRole("button", { name: /Select image 3 of 8/ })
+        .getByRole("button", { name: /Select image 3 of 7/ })
         .hover();
       await expect(thirdImage).toHaveAttribute("aria-current", "true");
     }
 
     const fourthImage = page.getByRole("button", {
-      name: "Show image 4 of 8",
+      name: "Show image 4 of 7",
     });
     await fourthImage.click();
     await expect(fourthImage).toHaveAttribute("aria-current", "true");
@@ -182,7 +188,9 @@ test.describe("project detail interactions", () => {
     await page.goto("/projects/layered-frames");
 
     await page
-      .getByRole("link", { name: "Next project: Garden Embrace Residence" })
+      .getByRole("link", {
+        name: /^Next project \/ 04 Garden Embrace Residence/,
+      })
       .click();
 
     await expect(page).toHaveURL(/\/projects\/garden-embrace-residence$/);

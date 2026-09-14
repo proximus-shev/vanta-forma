@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PortfolioProject } from "@/data/projects";
 import styles from "./ProjectIndex.module.css";
@@ -111,8 +112,15 @@ export default function ProjectCollection({
       ?.focus();
 
     const closeOnOutsidePress = (event: PointerEvent) => {
-      if (!filterControlRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        !filterControlRef.current?.contains(target) &&
+        !filterPanelRef.current?.contains(target)
+      ) {
         setFiltersOpen(false);
+        window.requestAnimationFrame(() =>
+          filterButtonRef.current?.focus({ preventScroll: true }),
+        );
       }
     };
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -166,6 +174,67 @@ export default function ProjectCollection({
     }
   };
 
+  const filterOverlay =
+    filtersOpen && typeof document !== "undefined"
+      ? createPortal(
+          <>
+            <button
+              className={styles.filterBackdrop}
+              type="button"
+              onClick={() => {
+                setFiltersOpen(false);
+                window.requestAnimationFrame(() =>
+                  filterButtonRef.current?.focus({ preventScroll: true }),
+                );
+              }}
+              aria-label="Close project filters"
+              tabIndex={-1}
+            />
+            <div
+              ref={filterPanelRef}
+              className={styles.filterPanel}
+              id="project-filter-panel"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Filter projects by category"
+            >
+              <div className={styles.filterPanelHeader}>
+                <span>Choose a category</span>
+                <strong>{String(projects.length).padStart(2, "0")} projects</strong>
+              </div>
+              <div className={styles.filterOptions}>
+                {categoriesWithCounts.map(({ category, count }) => (
+                  <button
+                    className={
+                      activeCategory === category
+                        ? styles.activeFilterOption
+                        : undefined
+                    }
+                    key={category}
+                    type="button"
+                    onClick={() => selectCategory(category, true)}
+                    aria-pressed={activeCategory === category}
+                  >
+                    <span>{category}</span>
+                    <small>{String(count).padStart(2, "0")}</small>
+                  </button>
+                ))}
+              </div>
+              {activeCategory !== "All" ? (
+                <button
+                  className={styles.clearFilter}
+                  type="button"
+                  onClick={() => selectCategory("All", true)}
+                >
+                  Clear filter
+                </button>
+              ) : null}
+            </div>
+          </>,
+          document.body,
+        )
+      : null;
+
   return (
     <>
       <section className={styles.intro} aria-labelledby="projects-title">
@@ -200,64 +269,10 @@ export default function ProjectCollection({
             <FilterIcon />
           </button>
 
-          {filtersOpen ? (
-            <>
-              <button
-                className={styles.filterBackdrop}
-                type="button"
-                onClick={() => {
-                  setFiltersOpen(false);
-                  window.requestAnimationFrame(() =>
-                    filterButtonRef.current?.focus({ preventScroll: true }),
-                  );
-                }}
-                aria-label="Close project filters"
-                tabIndex={-1}
-              />
-              <div
-                ref={filterPanelRef}
-                className={styles.filterPanel}
-                id="project-filter-panel"
-                role="dialog"
-                aria-modal="true"
-                aria-label="Filter projects by category"
-              >
-                <div className={styles.filterPanelHeader}>
-                  <span>Choose a category</span>
-                  <strong>{String(projects.length).padStart(2, "0")} projects</strong>
-                </div>
-                <div className={styles.filterOptions}>
-                  {categoriesWithCounts.map(({ category, count }) => (
-                    <button
-                      className={
-                        activeCategory === category
-                          ? styles.activeFilterOption
-                          : undefined
-                      }
-                      key={category}
-                      type="button"
-                      onClick={() => selectCategory(category, true)}
-                      aria-pressed={activeCategory === category}
-                    >
-                      <span>{category}</span>
-                      <small>{String(count).padStart(2, "0")}</small>
-                    </button>
-                  ))}
-                </div>
-                {activeCategory !== "All" ? (
-                  <button
-                    className={styles.clearFilter}
-                    type="button"
-                    onClick={() => selectCategory("All", true)}
-                  >
-                    Clear filter
-                  </button>
-                ) : null}
-              </div>
-            </>
-          ) : null}
         </div>
       </section>
+
+      {filterOverlay}
 
       <section className={styles.collection} aria-label="Portfolio projects">
         <div className={styles.controls} id="project-filters">
