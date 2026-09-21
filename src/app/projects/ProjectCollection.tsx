@@ -11,6 +11,7 @@ type ProjectCategory =
   | "All"
   | "Residential"
   | "Hospitality"
+  | "Wellness"
   | "Interior"
   | "Religious"
   | "Renovation";
@@ -20,6 +21,7 @@ const categories: ProjectCategory[] = [
   "All",
   "Residential",
   "Hospitality",
+  "Wellness",
   "Interior",
   "Religious",
   "Renovation",

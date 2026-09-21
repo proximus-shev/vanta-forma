@@ -368,6 +368,57 @@ const projectCatalog: Omit<PortfolioProject, "number">[] = [
     ],
   },
   {
+    slug: "the-breathing-canopy",
+    title: "The Breathing Canopy",
+    type: "Wellness",
+    typeDescription:
+      "An open wellness pavilion shaped by a butterfly roof, shaded movement spaces and a close relationship with landscape.",
+    location: "Accra",
+    status: "Concept design",
+    summary:
+      "A climate-responsive wellness pavilion where exercise, recovery and social life unfold beneath a generous butterfly roof.",
+    description: [
+      "The Breathing Canopy is conceived as a living threshold between shelter and landscape. Its butterfly roof opens toward the sky while drawing rainwater inward along a central valley, transforming climate into a visible part of the architectural experience.",
+      "Below the canopy, exercise, recovery and social activity flow through open, shaded spaces shaped by air, daylight, timber and water. Pools, planted courts and curved garden seating extend the pavilion into the landscape and create a calm setting for movement, rest and connection.",
+    ],
+    concept:
+      "A butterfly roof gathers light, air and rainwater above an open pavilion where wellness activities remain continuously connected to the landscape.",
+    inspiration:
+      "The cooling shade of a tree canopy and the restorative qualities of moving air, daylight, timber, water and planted outdoor space.",
+    planRationale:
+      "Exercise and recovery spaces gather beneath the central canopy, while pools, terraces, landscaped seating and arrival areas extend outward as a sequence of active and restorative zones.",
+    program: [
+      "Open exercise pavilion",
+      "Recovery and social spaces",
+      "Swimming and reflection pools",
+      "Landscaped rest terraces",
+      "Parking and arrival court",
+    ],
+    hero: "/images/projects/the-breathing-canopy/hero.webp",
+    plates: [
+      {
+        src: "/images/projects/the-breathing-canopy/gallery-02.webp",
+        alt: "The Breathing Canopy pavilion, parking and landscaped arrival court",
+      },
+      {
+        src: "/images/projects/the-breathing-canopy/gallery-03.webp",
+        alt: "Open exercise deck beneath the timber-lined butterfly roof",
+      },
+      {
+        src: "/images/projects/the-breathing-canopy/gallery-04.webp",
+        alt: "Sunset view from the shaded wellness deck toward the pool landscape",
+      },
+      {
+        src: "/images/projects/the-breathing-canopy/gallery-05.webp",
+        alt: "Curved timber platform and planted gathering garden",
+      },
+      {
+        src: "/images/projects/the-breathing-canopy/gallery-06.webp",
+        alt: "Circular garden seating arranged beneath mature trees",
+      },
+    ],
+  },
+  {
     slug: "house-of-god",
     title: "House of God",
     type: "Religious / Institutional",
@@ -499,6 +550,7 @@ const primaryProjectSlugs = [
   "box-and-bar",
   "layered-frames",
   "garden-embrace-residence",
+  "the-breathing-canopy",
 ];
 
 export const projects: PortfolioProject[] = [

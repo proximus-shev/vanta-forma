@@ -263,7 +263,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       <ProjectGallery
         images={project.plates}
+        projectLocation={project.location}
+        projectNumber={project.number}
+        projectStatus={project.status}
         projectTitle={project.title}
+        projectType={project.type}
         standardCards={project.slug === "house-of-god"}
       />
 

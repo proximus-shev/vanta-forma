@@ -43,13 +43,13 @@ test.describe("landing page interactions", () => {
     await openHome(page);
 
     const controls = page.getByLabel("Project controls");
-    await expect(controls.locator("span")).toHaveText("01 / 05");
+    await expect(controls.locator("span")).toHaveText("01 / 05 featured");
 
     await controls.getByRole("button", { name: "Next project" }).click();
-    await expect(controls.locator("span")).toHaveText("02 / 05");
+    await expect(controls.locator("span")).toHaveText("02 / 05 featured");
 
     await controls.getByRole("button", { name: "Previous project" }).click();
-    await expect(controls.locator("span")).toHaveText("01 / 05");
+    await expect(controls.locator("span")).toHaveText("01 / 05 featured");
   });
 
   test("exposes working contact destinations", async ({ page }) => {
@@ -84,7 +84,7 @@ test.describe("project collection interactions", () => {
       .locator("article");
     const firstCardLink = projectCards.first().locator("a");
 
-    await expect(projectCards).toHaveCount(10);
+    await expect(projectCards).toHaveCount(11);
     await expect(
       projectCards.first().getByText(/A bespoke three-storey mansion/i),
     ).toBeVisible();

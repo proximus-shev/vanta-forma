@@ -7,6 +7,8 @@ import { projects as portfolioProjects } from "@/data/projects";
 import styles from "./LandingPage.module.css";
 
 const projects = portfolioProjects.slice(0, 5);
+const totalProjectCount = portfolioProjects.length;
+const remainingProjectCount = totalProjectCount - projects.length;
 let hasPlayedIntroThisDocument = false;
 
 const navItems = [
@@ -512,7 +514,12 @@ export default function LandingPage() {
         </div>
 
         <div className={styles.heroIndex} aria-hidden="true">
-          <strong>VF</strong>
+          <Image
+            src="/images/brand/vanta-forma-monogram.webp"
+            alt=""
+            width={520}
+            height={522}
+          />
           <span>
             <i />
           </span>
@@ -533,68 +540,112 @@ export default function LandingPage() {
       <section id="work" className={styles.work} aria-labelledby="work-title">
         <div className={styles.workIntro} data-reveal>
           <p className={styles.sectionLabel}>Selected work</p>
+          <p className={styles.featuredCount}>
+            <span>{String(projects.length).padStart(2, "0")} featured</span>
+            <i aria-hidden="true" />
+            <span>{String(totalProjectCount).padStart(2, "0")} total</span>
+          </p>
           <h2 id="work-title">Spaces that speak silently.</h2>
           <p>
-            Each project is a dialogue between context, material, light and the
+            Five selected works exploring form, context, material and the
             people who experience it.
           </p>
           <Link href="/projects" className={styles.textLink}>
-            View all projects <Arrow />
-          </Link>
-        </div>
-
-        <div
-          id="projects"
-          ref={projectRailRef}
-          className={styles.projectRail}
-          onScroll={handleProjectRailScroll}
-          data-reveal
-        >
-          {projects.map((project, index) => (
-            <article
-              key={project.slug}
-              className={`${styles.projectCard} ${index === activeProject ? styles.projectActive : ""}`}
-              style={{ backgroundImage: `url(${project.hero})` }}
-              onMouseEnter={() => setActiveProject(index)}
-              onFocus={() => handleProjectFocus(index)}
-            >
-              <Link
-                href={`/projects/${project.slug}`}
-                className={styles.projectButton}
-                aria-label={`View ${project.title}`}
-              >
-                <span className={styles.projectNumber}>{project.number}</span>
-                <span className={styles.projectMeta}>
-                  <small>{project.location}</small>
-                  <strong>{project.title}</strong>
-                  <em>{project.type}</em>
-                  <i>
-                    <Arrow />
-                  </i>
-                </span>
-              </Link>
-            </article>
-          ))}
-        </div>
-
-        <div className={styles.projectControls} aria-label="Project controls">
-          <span aria-live="polite">
-            {String(activeProject + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
-          </span>
-          <button
-            type="button"
-            onClick={() => moveProject(-1)}
-            aria-label="Previous project"
-          >
-            <Arrow direction="left" />
-          </button>
-          <button
-            type="button"
-            onClick={() => moveProject(1)}
-            aria-label="Next project"
-          >
+            View all {String(totalProjectCount).padStart(2, "0")} projects{" "}
             <Arrow />
-          </button>
+          </Link>
+          <div className={styles.workBreakdown} aria-hidden="true">
+            <span>{String(projects.length).padStart(2, "0")} featured</span>
+            <i />
+            <span>{String(remainingProjectCount).padStart(2, "0")} more to explore</span>
+          </div>
+          <div className={styles.workTotal} aria-hidden="true">
+            <strong>{String(totalProjectCount).padStart(2, "0")}</strong>
+            <span>Projects<br />Different stories<br />A shared philosophy</span>
+          </div>
+        </div>
+
+        <div className={styles.projectShowcase}>
+          <div className={styles.projectToolbar}>
+            <div className={styles.projectTabs}>
+              <span>Featured projects ({String(projects.length).padStart(2, "0")})</span>
+              <Link href="/projects">All projects ({String(totalProjectCount).padStart(2, "0")})</Link>
+            </div>
+            <div className={styles.projectControls} aria-label="Project controls">
+              <span className={styles.projectControlStatus} aria-live="polite">
+                {String(activeProject + 1).padStart(2, "0")} /{" "}
+                {String(projects.length).padStart(2, "0")} featured
+              </span>
+              <button
+                type="button"
+                onClick={() => moveProject(-1)}
+                aria-label="Previous project"
+              >
+                <Arrow direction="left" />
+              </button>
+              <button
+                type="button"
+                onClick={() => moveProject(1)}
+                aria-label="Next project"
+              >
+                <Arrow />
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="projects"
+            ref={projectRailRef}
+            className={styles.projectRail}
+            data-reveal
+            onScroll={handleProjectRailScroll}
+          >
+            {projects.map((project, index) => (
+              <article
+                key={project.slug}
+                className={`${styles.projectCard} ${index === activeProject ? styles.projectActive : ""}`}
+                style={{ backgroundImage: `url(${project.hero})` }}
+                onMouseEnter={() => setActiveProject(index)}
+                onFocus={() => handleProjectFocus(index)}
+              >
+                <Link
+                  href={`/projects/${project.slug}`}
+                  className={styles.projectButton}
+                  aria-label={`View ${project.title}`}
+                >
+                  <span className={styles.projectNumber}>{project.number}</span>
+                  <span className={styles.projectMeta}>
+                    <strong>{project.title}</strong>
+                    <em>{project.type}</em>
+                    <span className={styles.projectView}><span>View project</span> <Arrow /></span>
+                  </span>
+                </Link>
+              </article>
+            ))}
+            <Link className={styles.moreProjects} href="/projects">
+              <strong>+{remainingProjectCount}</strong>
+              <span>More projects</span>
+              <small>Explore all {String(totalProjectCount).padStart(2, "0")} projects</small>
+              <i><Arrow /></i>
+              <em>More spaces.<br />More stories.<br />Same intention.</em>
+            </Link>
+          </div>
+
+          <div className={styles.projectFooter} aria-hidden="true">
+            <span />
+            <p>Architecture <i /> Interiors <i /> Places <i /> People</p>
+          </div>
+        </div>
+
+        <div className={styles.mobileWorkOutro}>
+          <div aria-hidden="true">
+            <span>{String(projects.length).padStart(2, "0")} featured</span>
+            <i />
+            <span>{String(remainingProjectCount).padStart(2, "0")} more to explore</span>
+          </div>
+          <Link href="/projects" className={styles.textLink}>
+            View all {String(totalProjectCount).padStart(2, "0")} projects <Arrow />
+          </Link>
         </div>
       </section>
 
@@ -611,7 +662,7 @@ export default function LandingPage() {
             <br />
             isn&apos;t about style.
             <br />
-            It&apos;s about intention.
+            It&apos;s about <span>intention.</span>
           </h2>
           <div className={styles.philosophyBody}>
             <p>
@@ -628,11 +679,26 @@ export default function LandingPage() {
             </p>
           </div>
           <div className={styles.expertise} aria-label="Areas of expertise">
-            <span>Design thinking</span>
-            <span>Revit</span>
-            <span>Lumion</span>
-            <span>Twinmotion</span>
-            <span>Documentation</span>
+            <span>
+              <svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 11 6.3v13.4L16 29 5 22.7V9.3L16 3Zm0 0v13m11-6.7-11 6.7L5 9.3M16 16v13" /></svg>
+              <small>Design thinking</small>
+            </span>
+            <span>
+              <Image src="/images/toolkit/revit.svg" alt="" width={32} height={32} aria-hidden="true" />
+              <small>Revit</small>
+            </span>
+            <span>
+              <Image src="/images/toolkit/lumion-icon.png" alt="" width={32} height={32} aria-hidden="true" />
+              <small>Lumion</small>
+            </span>
+            <span>
+              <svg viewBox="0 0 32 32" aria-hidden="true" className={styles.twinmotionLogo}><circle cx="16" cy="16" r="13" /><path d="M7 11h18M16 11l-3 15M22 11l-2 8" /></svg>
+              <small>Twinmotion</small>
+            </span>
+            <span>
+              <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 3h11l6 6v20H8V3Zm11 0v7h6M12 15h9M12 20h9M12 25h6" /></svg>
+              <small>Documentation</small>
+            </span>
           </div>
           <a
             href="#skills"
@@ -642,25 +708,36 @@ export default function LandingPage() {
           </a>
         </div>
 
-        <div
-          className={styles.philosophyImage}
-          data-reveal
-          role="img"
-          aria-label="Eugene Sasu Appiah presenting an architectural design process"
-        />
+        <div className={styles.philosophyRight}>
+          <div className={styles.philosophyVisual}>
+            <div
+              className={styles.philosophyImage}
+              role="img"
+              aria-label="Eugene Sasu Appiah presenting an architectural design process"
+            >
+              <span>Ideas today.<br />Better spaces tomorrow.</span>
+            </div>
+          </div>
 
-        <div className={styles.signatureBlock} data-reveal>
-          <Image
-            src="/images/brand/eugene-sasu-appiah-signature.png"
-            alt=""
-            width={720}
-            height={707}
-            className={styles.signature}
-            aria-hidden="true"
-          />
-          <div className={styles.signatureIdentity}>
-            <strong>Eugene Sasu Appiah</strong>
-            <span>Student architect &amp; creative director</span>
+          <div className={styles.philosophyClosing}>
+            <blockquote>
+              <b aria-hidden="true">“</b>
+              <p>Architecture is a dialogue between light, space and life.</p>
+            </blockquote>
+            <div className={styles.signatureBlock}>
+              <Image
+                src="/images/brand/eugene-sasu-appiah-signature.png"
+                alt=""
+                width={720}
+                height={707}
+                className={styles.signature}
+                aria-hidden="true"
+              />
+              <div className={styles.signatureIdentity}>
+                <strong>Eugene Sasu Appiah</strong>
+                <span>Student architect &amp; creative director</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>

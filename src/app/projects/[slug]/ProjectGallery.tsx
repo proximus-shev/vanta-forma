@@ -19,7 +19,11 @@ type GalleryImage = {
 
 type ProjectGalleryProps = {
   images: GalleryImage[];
+  projectLocation: string;
+  projectNumber: string;
+  projectStatus: string;
   projectTitle: string;
+  projectType: string;
   standardCards?: boolean;
 };
 
@@ -33,24 +37,40 @@ function GalleryArrow({ back = false }: { back?: boolean }) {
 
 export default function ProjectGallery({
   images,
+  projectLocation,
+  projectNumber,
+  projectStatus,
   projectTitle,
+  projectType,
   standardCards = false,
 }: ProjectGalleryProps) {
   const railRef = useRef<HTMLDivElement>(null);
   const scrollFrameRef = useRef<number | null>(null);
+  const programmaticImageRef = useRef<number | null>(null);
+  const programmaticScrollEndRef = useRef<number | null>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
   const lightboxCloseRef = useRef<HTMLButtonElement>(null);
   const lightboxTriggerRef = useRef<HTMLElement | null>(null);
+  const restoringImageRef = useRef<number | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const galleryStorageKey = `vanta-forma:gallery:${projectTitle}`;
 
-  const showImage = (index: number) => {
+  const showImage = useCallback((index: number) => {
     const nextIndex = (index + images.length) % images.length;
     const rail = railRef.current;
     const target = rail?.children.item(nextIndex) as HTMLElement | null;
 
+    programmaticImageRef.current = nextIndex;
     setActiveImage(nextIndex);
-    if (!rail || !target) return;
+    if (!rail || !target) {
+      programmaticImageRef.current = null;
+      return;
+    }
+
+    if (programmaticScrollEndRef.current !== null) {
+      window.clearTimeout(programmaticScrollEndRef.current);
+    }
 
     const railRect = rail.getBoundingClientRect();
     const targetRect = target.getBoundingClientRect();
@@ -58,7 +78,12 @@ export default function ProjectGallery({
       left: rail.scrollLeft + targetRect.left - railRect.left,
       behavior: "smooth",
     });
-  };
+
+    programmaticScrollEndRef.current = window.setTimeout(() => {
+      programmaticImageRef.current = null;
+      programmaticScrollEndRef.current = null;
+    }, 650);
+  }, [images.length]);
 
   const handleRailScroll = () => {
     if (scrollFrameRef.current !== null) {
@@ -69,19 +94,34 @@ export default function ProjectGallery({
       const rail = railRef.current;
       if (!rail) return;
 
-      const railRect = rail.getBoundingClientRect();
+      if (programmaticImageRef.current !== null) {
+        setActiveImage(programmaticImageRef.current);
+
+        if (programmaticScrollEndRef.current !== null) {
+          window.clearTimeout(programmaticScrollEndRef.current);
+        }
+        programmaticScrollEndRef.current = window.setTimeout(() => {
+          programmaticImageRef.current = null;
+          programmaticScrollEndRef.current = null;
+        }, 180);
+        scrollFrameRef.current = null;
+        return;
+      }
+
       const useCenteredCard = window.matchMedia("(max-width: 760px)").matches;
-      const railTarget = useCenteredCard
-        ? railRect.left + railRect.width / 2
-        : railRect.left;
+      if (!useCenteredCard) {
+        scrollFrameRef.current = null;
+        return;
+      }
+
+      const railRect = rail.getBoundingClientRect();
+      const railTarget = railRect.left + railRect.width / 2;
       let closestIndex = 0;
       let closestDistance = Number.POSITIVE_INFINITY;
 
       Array.from(rail.children).forEach((child, index) => {
         const childRect = child.getBoundingClientRect();
-        const childTarget = useCenteredCard
-          ? childRect.left + childRect.width / 2
-          : childRect.left;
+        const childTarget = childRect.left + childRect.width / 2;
         const distance = Math.abs(childTarget - railTarget);
 
         if (distance < closestDistance) {
@@ -98,15 +138,26 @@ export default function ProjectGallery({
   };
 
   const openLightbox = (index: number, trigger: HTMLElement) => {
+    if (scrollFrameRef.current !== null) {
+      window.cancelAnimationFrame(scrollFrameRef.current);
+      scrollFrameRef.current = null;
+    }
     setActiveImage(index);
     lightboxTriggerRef.current = trigger;
     setLightboxOpen(true);
   };
 
-  const closeLightbox = () => {
+  const closeLightbox = useCallback(() => {
     setLightboxOpen(false);
-    window.requestAnimationFrame(() => lightboxTriggerRef.current?.focus());
-  };
+    window.requestAnimationFrame(() => {
+      const activeTrigger = railRef.current?.children
+        .item(activeImage)
+        ?.querySelector<HTMLButtonElement>("button");
+
+      (activeTrigger ?? lightboxTriggerRef.current)?.focus({ preventScroll: true });
+      showImage(activeImage);
+    });
+  }, [activeImage, showImage]);
 
   const stepLightbox = useCallback((direction: number) => {
     setActiveImage(
@@ -119,9 +170,56 @@ export default function ProjectGallery({
       if (scrollFrameRef.current !== null) {
         window.cancelAnimationFrame(scrollFrameRef.current);
       }
+      if (programmaticScrollEndRef.current !== null) {
+        window.clearTimeout(programmaticScrollEndRef.current);
+      }
     },
     [],
   );
+
+  useEffect(() => {
+    const savedImage = Number.parseInt(
+      window.sessionStorage.getItem(galleryStorageKey) ?? "",
+      10,
+    );
+
+    if (
+      Number.isNaN(savedImage) ||
+      savedImage < 0 ||
+      savedImage >= images.length
+    ) {
+      restoringImageRef.current = null;
+      return;
+    }
+
+    restoringImageRef.current = savedImage;
+
+    window.requestAnimationFrame(() => {
+      setActiveImage(savedImage);
+      const rail = railRef.current;
+      const target = rail?.children.item(savedImage) as HTMLElement | null;
+      if (!rail || !target) return;
+
+      const railRect = rail.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      rail.scrollTo({
+        left: rail.scrollLeft + targetRect.left - railRect.left,
+        behavior: "auto",
+      });
+    });
+  }, [galleryStorageKey, images.length]);
+
+  useEffect(() => {
+    if (
+      restoringImageRef.current !== null &&
+      restoringImageRef.current !== activeImage
+    ) {
+      return;
+    }
+
+    restoringImageRef.current = null;
+    window.sessionStorage.setItem(galleryStorageKey, String(activeImage));
+  }, [activeImage, galleryStorageKey]);
 
   useEffect(() => {
     if (!lightboxOpen) return;
@@ -172,13 +270,15 @@ export default function ProjectGallery({
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleLightboxKeyDown);
     };
-  }, [lightboxOpen, stepLightbox]);
+  }, [closeLightbox, lightboxOpen, stepLightbox]);
 
   const closeOnBackdrop = (event: MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) closeLightbox();
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (lightboxOpen) return;
+
     if (event.key === "ArrowLeft") {
       event.preventDefault();
       showImage(activeImage - 1);
@@ -190,11 +290,15 @@ export default function ProjectGallery({
     }
   };
 
+  const previousImage = (activeImage - 1 + images.length) % images.length;
+  const nextImage = (activeImage + 1) % images.length;
+
   return (
     <section
       id="gallery"
       className={`${styles.gallery} ${standardCards ? styles.galleryStandardCards : ""}`}
       aria-labelledby="gallery-title"
+      onKeyDown={handleKeyDown}
     >
       <div className={styles.galleryHeading}>
         <h2 id="gallery-title">
@@ -226,7 +330,6 @@ export default function ProjectGallery({
           ref={railRef}
           className={styles.galleryRail}
           tabIndex={0}
-          onKeyDown={handleKeyDown}
           onScroll={handleRailScroll}
           aria-label={`${projectTitle} image gallery. Use left and right arrow keys to navigate.`}
         >
@@ -240,8 +343,9 @@ export default function ProjectGallery({
                 type="button"
                 className={`${styles.galleryImage} ${
                   image.fit === "contain" ? styles.galleryImageContain : ""
-                }`}
+                } ${index === activeImage ? styles.galleryImageActive : ""}`}
                 onClick={(event) => openLightbox(index, event.currentTarget)}
+                onFocus={() => setActiveImage(index)}
                 aria-label={`Select image ${index + 1} of ${images.length}: ${image.alt}`}
               >
                 <Image
@@ -295,18 +399,9 @@ export default function ProjectGallery({
           onMouseDown={closeOnBackdrop}
         >
           <div className={styles.lightboxFrame} ref={lightboxRef}>
-            <button
-              ref={lightboxCloseRef}
-              type="button"
-              className={styles.lightboxClose}
-              onClick={closeLightbox}
-              aria-label="Close image viewer"
-            >
-              <i />
-              <i />
-            </button>
-
-            <div className={styles.lightboxImage}>
+            <div className={`${styles.lightboxImage} ${
+              images[activeImage].fit === "contain" ? styles.lightboxImageContain : ""
+            }`}>
               <Image
                 src={images[activeImage].src}
                 alt={images[activeImage].alt}
@@ -314,17 +409,26 @@ export default function ProjectGallery({
                 sizes="100vw"
                 quality={90}
               />
-            </div>
+              <Image
+                src="/images/brand/vanta-forma-logo.webp"
+                alt="Vanta Forma"
+                width={1400}
+                height={396}
+                className={styles.lightboxMobileBrand}
+              />
 
-            <div className={styles.lightboxFooter}>
-              <p>
-                <span>{projectTitle}</span>
-                <small>
-                  Image {String(activeImage + 1).padStart(2, "0")} /{" "}
-                  {String(images.length).padStart(2, "0")}
-                </small>
-              </p>
-              <div>
+              <button
+                ref={lightboxCloseRef}
+                type="button"
+                className={styles.lightboxClose}
+                onClick={closeLightbox}
+                aria-label="Close image viewer"
+              >
+                <i />
+                <i />
+              </button>
+
+              <div className={styles.lightboxSideControls}>
                 <button
                   type="button"
                   onClick={() => stepLightbox(-1)}
@@ -342,6 +446,43 @@ export default function ProjectGallery({
                   <GalleryArrow />
                 </button>
               </div>
+            </div>
+
+            <div className={styles.lightboxFilmstrip}>
+              <button type="button" onClick={() => stepLightbox(-1)} aria-label="Previous image">
+                <strong>{String(previousImage + 1).padStart(2, "0")}</strong>
+                <span>Previous</span>
+              </button>
+
+              <div className={styles.lightboxThumbnails} aria-label="Select an image">
+                {images.map((image, index) => (
+                  <button
+                    type="button"
+                    key={image.src}
+                    className={index === activeImage ? styles.lightboxThumbnailActive : undefined}
+                    onClick={() => setActiveImage(index)}
+                    aria-label={`View image ${index + 1} of ${images.length}`}
+                    aria-current={index === activeImage ? "true" : undefined}
+                  >
+                    <Image src={image.src} alt="" fill sizes="150px" aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
+
+              <button type="button" onClick={() => stepLightbox(1)} aria-label="Next image">
+                <span>Next</span>
+                <strong>{String(nextImage + 1).padStart(2, "0")}</strong>
+              </button>
+            </div>
+
+            <div className={styles.lightboxMeta}>
+              <dl>
+                <div><dt>Project</dt><dd>{projectNumber} — {projectTitle}</dd></div>
+                <div><dt>Location</dt><dd>{projectLocation}</dd></div>
+                <div><dt>Type</dt><dd>{projectType}</dd></div>
+                <div><dt>Status</dt><dd>{projectStatus}</dd></div>
+              </dl>
+              <p>Architecture shaped with intention.</p>
             </div>
           </div>
         </div>
