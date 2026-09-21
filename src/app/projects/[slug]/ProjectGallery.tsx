@@ -51,6 +51,8 @@ export default function ProjectGallery({
   const programmaticScrollEndRef = useRef<number | null>(null);
   const viewerTouchStartRef = useRef<{ x: number; y: number } | null>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
+  const lightboxThumbnailsRef = useRef<HTMLDivElement>(null);
+  const lightboxSlideTimerRef = useRef<number | null>(null);
   const lightboxCloseRef = useRef<HTMLButtonElement>(null);
   const lightboxTriggerRef = useRef<HTMLElement | null>(null);
   const restoringImageRef = useRef<number | null>(null);
@@ -58,6 +60,7 @@ export default function ProjectGallery({
   const [lightboxDirection, setLightboxDirection] = useState<
     "next" | "previous" | null
   >(null);
+  const [departingImage, setDepartingImage] = useState<number | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const galleryStorageKey = `vanta-forma:gallery:${projectTitle}`;
 
@@ -165,18 +168,29 @@ export default function ProjectGallery({
     });
   }, [activeImage, showImage]);
 
-  const stepLightbox = useCallback((direction: number) => {
-    setLightboxDirection(direction > 0 ? "next" : "previous");
-    setActiveImage(
-      (current) => (current + direction + images.length) % images.length,
-    );
-  }, [images.length]);
-
-  const selectLightboxImage = (index: number) => {
+  const selectLightboxImage = useCallback((
+    index: number,
+    direction?: "next" | "previous",
+  ) => {
     if (index === activeImage) return;
-    setLightboxDirection(index > activeImage ? "next" : "previous");
+
+    if (lightboxSlideTimerRef.current !== null) {
+      window.clearTimeout(lightboxSlideTimerRef.current);
+    }
+
+    setDepartingImage(activeImage);
+    setLightboxDirection(direction ?? (index > activeImage ? "next" : "previous"));
     setActiveImage(index);
-  };
+    lightboxSlideTimerRef.current = window.setTimeout(() => {
+      setDepartingImage(null);
+      lightboxSlideTimerRef.current = null;
+    }, 420);
+  }, [activeImage]);
+
+  const stepLightbox = useCallback((direction: number) => {
+    const nextIndex = (activeImage + direction + images.length) % images.length;
+    selectLightboxImage(nextIndex, direction > 0 ? "next" : "previous");
+  }, [activeImage, images.length, selectLightboxImage]);
 
   useEffect(
     () => () => {
@@ -185,6 +199,9 @@ export default function ProjectGallery({
       }
       if (programmaticScrollEndRef.current !== null) {
         window.clearTimeout(programmaticScrollEndRef.current);
+      }
+      if (lightboxSlideTimerRef.current !== null) {
+        window.clearTimeout(lightboxSlideTimerRef.current);
       }
     },
     [],
@@ -233,6 +250,26 @@ export default function ProjectGallery({
     restoringImageRef.current = null;
     window.sessionStorage.setItem(galleryStorageKey, String(activeImage));
   }, [activeImage, galleryStorageKey]);
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const thumbnails = lightboxThumbnailsRef.current;
+      const activeThumbnail = thumbnails?.children.item(activeImage) as HTMLElement | null;
+      if (!thumbnails || !activeThumbnail) return;
+
+      const centeredPosition =
+        activeThumbnail.offsetLeft -
+        (thumbnails.clientWidth - activeThumbnail.offsetWidth) / 2;
+      thumbnails.scrollTo({
+        left: Math.max(0, centeredPosition),
+        behavior: "smooth",
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeImage, lightboxOpen]);
 
   useEffect(() => {
     if (!lightboxOpen) return;
@@ -445,6 +482,22 @@ export default function ProjectGallery({
                 viewerTouchStartRef.current = null;
               }}
             >
+              {departingImage !== null ? (
+                <Image
+                  key={`departing-${images[departingImage].src}`}
+                  src={images[departingImage].src}
+                  alt=""
+                  fill
+                  sizes="100vw"
+                  quality={90}
+                  aria-hidden="true"
+                  className={`${styles.lightboxMainImage} ${
+                    lightboxDirection === "next"
+                      ? styles.lightboxSlideOutNext
+                      : styles.lightboxSlideOutPrevious
+                  }`}
+                />
+              ) : null}
               <Image
                 key={images[activeImage].src}
                 src={images[activeImage].src}
@@ -452,13 +505,13 @@ export default function ProjectGallery({
                 fill
                 sizes="100vw"
                 quality={90}
-                className={
+                className={`${styles.lightboxMainImage} ${
                   lightboxDirection === "next"
                     ? styles.lightboxSlideNext
                     : lightboxDirection === "previous"
                       ? styles.lightboxSlidePrevious
-                      : undefined
-                }
+                      : ""
+                }`}
               />
               <Image
                 src="/images/brand/vanta-forma-logo.webp"
@@ -505,7 +558,11 @@ export default function ProjectGallery({
                 <span>Previous</span>
               </button>
 
-              <div className={styles.lightboxThumbnails} aria-label="Select an image">
+              <div
+                ref={lightboxThumbnailsRef}
+                className={styles.lightboxThumbnails}
+                aria-label="Select an image"
+              >
                 {images.map((image, index) => (
                   <button
                     type="button"
