@@ -666,7 +666,7 @@ export default function LandingPage() {
           </h2>
           <div className={styles.philosophyBody}>
             <p>
-              Eugene Sasu Appiah is a student architect whose work
+              Eugene Sasu Appiah is a graduate architect whose work
               reflects a growing understanding of space, function and context.
               His academic and creative projects bring together design thinking,
               technical development and a commitment to purposeful spaces.
@@ -735,7 +735,7 @@ export default function LandingPage() {
               />
               <div className={styles.signatureIdentity}>
                 <strong>Eugene Sasu Appiah</strong>
-                <span>Student architect &amp; creative director</span>
+                <span>Graduate architect &amp; creative director</span>
               </div>
             </div>
           </div>

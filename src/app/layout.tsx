@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: portfolioDescription,
   keywords: [
     "architectural portfolio",
-    "student architect",
+    "graduate architect",
     "Eugene Sasu Appiah",
     "Accra",
     "Ghana",
