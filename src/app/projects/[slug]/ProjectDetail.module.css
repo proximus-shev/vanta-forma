@@ -184,9 +184,11 @@
 .galleryPagination .galleryDotActive::before { width: 27px; background: var(--gold); }
 .lightbox { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: clamp(8px,1.4vw,24px); background: rgba(2,2,2,.96); backdrop-filter: blur(16px); }
 .lightboxFrame { position: relative; display: grid; width: min(1540px,100%); height: min(920px,calc(100dvh - 16px)); grid-template-rows: minmax(0,1fr) auto auto; overflow: hidden; border: 1px solid rgba(255,255,255,.14); border-radius: 22px; background: #050505; box-shadow: 0 28px 90px rgba(0,0,0,.72); }
-.lightboxImage { position: relative; min-height: 0; overflow: hidden; background: #050505; }
+.lightboxImage { position: relative; min-height: 0; overflow: hidden; background: #050505; touch-action: pan-y; }
 .lightboxImage > img:first-child { object-fit: contain; }
 .lightboxImageContain > img:first-child { object-fit: contain; }
+.lightboxSlideNext { animation: lightboxSlideFromRight .34s cubic-bezier(.22,.75,.25,1) both; }
+.lightboxSlidePrevious { animation: lightboxSlideFromLeft .34s cubic-bezier(.22,.75,.25,1) both; }
 .lightboxMobileBrand { display: none; }
 .lightboxClose { position: absolute; z-index: 4; top: 24px; right: 24px; width: 48px; height: 48px; padding: 0; border: 1px solid rgba(255,255,255,.32); border-radius: 50%; outline: none; background: rgba(3,3,3,.54); color: rgba(255,255,255,.78); cursor: pointer; transition: border-color .16s ease,background .16s ease,color .16s ease; }
 .lightboxClose i { position: absolute; top: 50%; left: 13px; width: 20px; height: 1px; background: currentColor; transform: rotate(45deg); }
@@ -263,6 +265,13 @@
 
 @keyframes heroImageIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes contentIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes lightboxSlideFromRight { from { opacity: .45; transform: translateX(12%); } to { opacity: 1; transform: translateX(0); } }
+@keyframes lightboxSlideFromLeft { from { opacity: .45; transform: translateX(-12%); } to { opacity: 1; transform: translateX(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .lightboxSlideNext,
+  .lightboxSlidePrevious { animation: none; }
+}
 
 @media (max-width: 1100px) {
   .header { grid-template-columns: 1fr auto; }

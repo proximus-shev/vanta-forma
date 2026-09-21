@@ -872,13 +872,13 @@
   .projectRail { gap: 12px; min-height: 430px; overflow-x: auto; border: 0; border-radius: 0; box-shadow: none; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .projectRail::-webkit-scrollbar { display: none; }
   .projectCard,
-  .projectActive { min-width: 100%; flex: 0 0 100%; overflow: hidden; border: 0; border-radius: 16px; scroll-snap-align: start; }
+  .projectActive { min-width: calc(100% - 56px); flex: 0 0 calc(100% - 56px); overflow: hidden; border: 0; border-radius: 16px; scroll-snap-align: start; }
   .projectNumber { top: 20px; left: 20px; }
   .projectMeta { right: 20px; bottom: 20px; left: 20px; }
   .projectMeta strong { max-width: 230px; font-size: clamp(1.35rem,6vw,1.8rem); line-height: .94; }
   .projectMeta em { margin-top: 9px; }
   .projectView { margin-top: 16px; }
-  .moreProjects { min-width: 100%; flex-basis: 100%; border: 1px solid rgba(200,165,108,.28); border-radius: 16px; scroll-snap-align: start; }
+  .moreProjects { min-width: calc(100% - 56px); flex-basis: calc(100% - 56px); border: 1px solid rgba(200,165,108,.28); border-radius: 16px; scroll-snap-align: start; }
   .projectFooter { display: none; }
   .mobileWorkOutro { position: relative; z-index: 2; display: block; margin-top: 24px; }
   .mobileWorkOutro > div { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; color: rgba(255,255,255,.78); font-size: 8px; letter-spacing: .17em; text-transform: uppercase; }

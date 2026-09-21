@@ -4,6 +4,7 @@ import Image from "next/image";
 import {
   type KeyboardEvent,
   type MouseEvent,
+  type TouchEvent,
   useCallback,
   useEffect,
   useRef,
@@ -48,11 +49,15 @@ export default function ProjectGallery({
   const scrollFrameRef = useRef<number | null>(null);
   const programmaticImageRef = useRef<number | null>(null);
   const programmaticScrollEndRef = useRef<number | null>(null);
+  const viewerTouchStartRef = useRef<{ x: number; y: number } | null>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
   const lightboxCloseRef = useRef<HTMLButtonElement>(null);
   const lightboxTriggerRef = useRef<HTMLElement | null>(null);
   const restoringImageRef = useRef<number | null>(null);
   const [activeImage, setActiveImage] = useState(0);
+  const [lightboxDirection, setLightboxDirection] = useState<
+    "next" | "previous" | null
+  >(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const galleryStorageKey = `vanta-forma:gallery:${projectTitle}`;
 
@@ -143,6 +148,7 @@ export default function ProjectGallery({
       scrollFrameRef.current = null;
     }
     setActiveImage(index);
+    setLightboxDirection(null);
     lightboxTriggerRef.current = trigger;
     setLightboxOpen(true);
   };
@@ -160,10 +166,17 @@ export default function ProjectGallery({
   }, [activeImage, showImage]);
 
   const stepLightbox = useCallback((direction: number) => {
+    setLightboxDirection(direction > 0 ? "next" : "previous");
     setActiveImage(
       (current) => (current + direction + images.length) % images.length,
     );
   }, [images.length]);
+
+  const selectLightboxImage = (index: number) => {
+    if (index === activeImage) return;
+    setLightboxDirection(index > activeImage ? "next" : "previous");
+    setActiveImage(index);
+  };
 
   useEffect(
     () => () => {
@@ -290,6 +303,30 @@ export default function ProjectGallery({
     }
   };
 
+  const handleViewerTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    viewerTouchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleViewerTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const start = viewerTouchStartRef.current;
+    const touch = event.changedTouches[0];
+    viewerTouchStartRef.current = null;
+    if (!start || !touch) return;
+
+    const horizontalDistance = touch.clientX - start.x;
+    const verticalDistance = touch.clientY - start.y;
+    if (
+      Math.abs(horizontalDistance) < 45 ||
+      Math.abs(horizontalDistance) <= Math.abs(verticalDistance)
+    ) {
+      return;
+    }
+
+    stepLightbox(horizontalDistance < 0 ? 1 : -1);
+  };
+
   const previousImage = (activeImage - 1 + images.length) % images.length;
   const nextImage = (activeImage + 1) % images.length;
 
@@ -401,13 +438,27 @@ export default function ProjectGallery({
           <div className={styles.lightboxFrame} ref={lightboxRef}>
             <div className={`${styles.lightboxImage} ${
               images[activeImage].fit === "contain" ? styles.lightboxImageContain : ""
-            }`}>
+            }`}
+              onTouchStart={handleViewerTouchStart}
+              onTouchEnd={handleViewerTouchEnd}
+              onTouchCancel={() => {
+                viewerTouchStartRef.current = null;
+              }}
+            >
               <Image
+                key={images[activeImage].src}
                 src={images[activeImage].src}
                 alt={images[activeImage].alt}
                 fill
                 sizes="100vw"
                 quality={90}
+                className={
+                  lightboxDirection === "next"
+                    ? styles.lightboxSlideNext
+                    : lightboxDirection === "previous"
+                      ? styles.lightboxSlidePrevious
+                      : undefined
+                }
               />
               <Image
                 src="/images/brand/vanta-forma-logo.webp"
@@ -460,7 +511,7 @@ export default function ProjectGallery({
                     type="button"
                     key={image.src}
                     className={index === activeImage ? styles.lightboxThumbnailActive : undefined}
-                    onClick={() => setActiveImage(index)}
+                    onClick={() => selectLightboxImage(index)}
                     aria-label={`View image ${index + 1} of ${images.length}`}
                     aria-current={index === activeImage ? "true" : undefined}
                   >
