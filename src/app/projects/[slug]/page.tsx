@@ -268,7 +268,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         projectStatus={project.status}
         projectTitle={project.title}
         projectType={project.type}
-        standardCards={project.slug === "house-of-god"}
       />
 
       <section className={styles.details} aria-label="Project details and features">

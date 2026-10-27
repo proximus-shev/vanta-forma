@@ -139,21 +139,6 @@ const projectCatalog: Omit<PortfolioProject, "number">[] = [
         alt: "Legacy Townhouses panoramic elevation study",
         fit: "contain",
       },
-      {
-        src: "/images/projects/legacy-townhouses/gallery-04.webp",
-        alt: "Legacy Townhouses ground-floor plan",
-        fit: "contain",
-      },
-      {
-        src: "/images/projects/legacy-townhouses/gallery-05.webp",
-        alt: "Legacy Townhouses first-floor plan",
-        fit: "contain",
-      },
-      {
-        src: "/images/projects/legacy-townhouses/gallery-06.webp",
-        alt: "Legacy Townhouses penthouse plan",
-        fit: "contain",
-      },
     ],
   },
   {
@@ -199,23 +184,52 @@ const projectCatalog: Omit<PortfolioProject, "number">[] = [
         alt: "Executive Residence illuminated pool courtyard",
       },
       {
-        src: "/images/projects/executive-residence/gallery-05.webp",
-        alt: "Executive Residence architectural floor plan study one",
-        fit: "contain",
-      },
-      {
-        src: "/images/projects/executive-residence/gallery-06.webp",
-        alt: "Executive Residence architectural floor plan study two",
-        fit: "contain",
-      },
-      {
-        src: "/images/projects/executive-residence/gallery-07.webp",
-        alt: "Executive Residence architectural floor plan study three",
-        fit: "contain",
-      },
-      {
         src: "/images/projects/executive-residence/gallery-08.webp",
         alt: "Executive Residence pool terrace and water features",
+      },
+    ],
+  },
+  {
+    slug: "the-elevated-showcase",
+    title: "The Elevated Showcase",
+    type: "Commercial",
+    typeDescription:
+      "A combined warehouse and showroom that separates robust operations below from a lighter customer-facing display level above.",
+    location: "Accra, Ghana",
+    status: "Real project",
+    summary:
+      "A warehouse and elevated showroom organized around movement, storage, display and engagement.",
+    description: [
+      "The Elevated Showcase brings two connected activities into one clear architectural composition: movement and storage below, with display and engagement above. The warehouse forms a robust working base designed around daily operations and efficient access.",
+      "Above it, the showroom is expressed as a lighter and more transparent volume. Broad glazing, controlled framing and a sheltered entrance give the public-facing level a distinct identity while maintaining a strong visual relationship with the working base beneath it.",
+    ],
+    concept:
+      "The project expresses two connected activities: movement and storage below, display and engagement above. The warehouse forms a robust working base, while the showroom appears as a lighter, more transparent volume elevated over it.",
+    inspiration:
+      "The contrast between a durable operational base and an open customer-facing showcase, expressed through weight, transparency and horizontal form.",
+    planRationale:
+      "Operational movement and storage are organized within the lower warehouse level, while the elevated showroom creates a clear destination for display, interaction and customer engagement.",
+    program: [
+      "Warehouse and storage base",
+      "Elevated showroom",
+      "Display and engagement spaces",
+      "Operational movement areas",
+      "Customer arrival and parking",
+    ],
+    hero: "/images/projects/the-elevated-showcase/hero.jpg",
+    plates: [
+      {
+        src: "/images/projects/the-elevated-showcase/gallery-02.jpg",
+        alt: "The Elevated Showcase panoramic street elevation",
+      },
+      {
+        src: "/images/projects/the-elevated-showcase/gallery-03.jpg",
+        alt: "The Elevated Showcase entrance and customer arrival view",
+      },
+      {
+        src: "/images/projects/the-elevated-showcase/gallery-04.jpg",
+        alt: "The Elevated Showcase architectural elevation sketch",
+        fit: "contain",
       },
     ],
   },
@@ -550,6 +564,7 @@ const primaryProjectSlugs = [
   "box-and-bar",
   "layered-frames",
   "garden-embrace-residence",
+  "the-elevated-showcase",
   "the-breathing-canopy",
 ];
 
